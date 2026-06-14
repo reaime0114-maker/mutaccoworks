@@ -374,9 +374,11 @@ function render(t){
   var maxPulse=1.05;
   var maxFontW=Math.floor(W*0.78/Math.max(t1.length,1)/0.62);
   var maxFontH=has2?Math.floor(H*0.38):Math.floor(H*0.65);
-  var fs1=Math.min(130,maxFontW,maxFontH);
-  var maxFontW2=has2?Math.floor(W*0.78/Math.max(t2.length,1)/0.62):fs1;
-  var fs2=has2?Math.min(130,maxFontW2,maxFontH):fs1;
+  // 初回計算したサイズを固定して使い続ける
+  if(!lockedFs1){lockedFs1=Math.min(130,maxFontW,maxFontH);}
+  if(!lockedFs2){var maxFontW2=has2?Math.floor(W*0.78/Math.max(t2.length,1)/0.62):lockedFs1;lockedFs2=has2?Math.min(130,maxFontW2,maxFontH):lockedFs1;}
+  var fs1=lockedFs1;
+  var fs2=lockedFs2;
   if(!has2){drawTwoLines(t1,null,H/2,H/2,fs1,fs1,col,pulse,shk);}
   else{var h1=fs1*1.60*pulse,h2=fs2*1.60*pulse,sc2=(h1+h2)>H*0.92?H*0.92/(h1+h2):1,cy1=H/2-(h2*sc2)/2*0.85,cy2=H/2+(h1*sc2)/2*0.85;drawTwoLines(t1,t2,cy1,cy2,fs1,fs2,col,pulse,shk);}
   drawWatermark();
