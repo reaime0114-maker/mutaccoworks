@@ -473,7 +473,7 @@ function makeGif(btn){
   }).catch(function(){btn.textContent='Save(Movie)';btn.style.opacity='1';alert('GIF生成に失敗しました');});
 }
 document.getElementById('gifBtn').onclick=function(){makeGif(this);};
-document.getElementById('shareBtn').onclick=function(){window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent('#pachimoji #\u3080\u305f\u5de5\u623f'),'_blank');};
+document.getElementById('shareBtn').onclick=function(){window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent('https://mutaccoworks.github.io/pachimoji.html\n#むたっこ製作所#パチ文字メーカー'),'_blank');};
 function startAnim(){animOn=true;document.getElementById('animBtn').textContent='stop';document.getElementById('animBtn').classList.add('on');step();}
 function stopAnim(){animOn=false;cancelAnimationFrame(rafId);document.getElementById('animBtn').textContent='play';document.getElementById('animBtn').classList.remove('on');}
 var animTF=0; // 小数点対応のframeカウンター
