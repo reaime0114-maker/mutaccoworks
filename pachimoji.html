@@ -326,6 +326,25 @@ function drawTwoLines(t1,t2,cy1,cy2,fs1,fs2,col,pulse,shk){
   addGloss([[0,'rgba(0,0,0,0)'],[0.52,'rgba(0,0,0,0)'],[0.7,'rgba(0,0,0,0.26)'],[0.85,'rgba(0,0,0,0.50)'],[1,'rgba(0,0,0,0.56)']]);
   addGloss([[0,'rgba(255,240,170,0.32)'],[0.14,'rgba(255,240,170,0.14)'],[0.36,'rgba(255,240,170,0)']]);
   addGloss([[0,'rgba(255,240,170,0)'],[0.62,'rgba(255,240,170,0)'],[0.86,'rgba(255,240,170,0.16)'],[1,'rgba(255,240,170,0.28)']]);
+  if(t2){
+    function mkMask2(){var mo=document.createElement('canvas');mo.width=W;mo.height=H;var mc=mo.getContext('2d');mc.save();AT(mc,W/2-shk*0.5,cy2,fs2*pulse,-0.035,-0.04);mc.lineWidth=fs2*pulse*0.46;mc.strokeStyle='rgba(255,255,255,1)';mc.strokeText(t2,0,0);mc.restore();mc.globalCompositeOperation='destination-out';mc.save();AT(mc,W/2-shk*0.5,cy2,fs2*pulse,-0.035,-0.04);mc.lineWidth=fs2*pulse*0.17;mc.strokeStyle='#000';mc.strokeText(t2,0,0);mc.fillStyle='#000';mc.fillText(t2,0,0);mc.restore();return mo;}
+    var rimMask2=mkMask2();
+    var top2=cy2-fs2*pulse*0.5,bot2=cy2+fs2*pulse*1.2;
+    [[[0,'rgba(255,255,255,0)'],[0.12,'rgba(255,255,255,0)'],[0.24,'rgba(255,255,248,0.88)'],[0.34,'rgba(255,255,220,0.32)'],[0.44,'rgba(255,255,200,0)']],[[0,'rgba(255,220,80,0)'],[0.36,'rgba(255,220,80,0)'],[0.49,'rgba(255,205,70,0.24)'],[0.6,'rgba(255,220,80,0)']],[[0,'rgba(0,0,0,0)'],[0.52,'rgba(0,0,0,0)'],[0.7,'rgba(0,0,0,0.26)'],[0.85,'rgba(0,0,0,0.50)'],[1,'rgba(0,0,0,0.56)']],[[0,'rgba(255,240,170,0.32)'],[0.14,'rgba(255,240,170,0.14)'],[0.36,'rgba(255,240,170,0)']],[[0,'rgba(255,240,170,0)'],[0.62,'rgba(255,240,170,0)'],[0.86,'rgba(255,240,170,0.16)'],[1,'rgba(255,240,170,0.28)']]].forEach(function(stops){
+      var go=document.createElement('canvas');go.width=W;go.height=H;var gc2=go.getContext('2d');
+      var g2=gc2.createLinearGradient(0,top2,0,bot2);
+      stops.forEach(function(s){g2.addColorStop(s[0],s[1]);});
+      gc2.fillStyle=g2;gc2.fillRect(0,0,W,H);
+      gc2.globalCompositeOperation='destination-in';gc2.drawImage(rimMask2,0,0);
+      // 1行目シルエットで重なり部分を消す（ぼかしで境目をなめらかに）
+      gc2.globalCompositeOperation='destination-out';
+      var mask1=document.createElement('canvas');mask1.width=W;mask1.height=H;var mc1=mask1.getContext('2d');
+      mc1.filter='blur(6px)';
+      mc1.save();AT(mc1,W/2+shk,cy1,fs1*pulse,-0.035,-0.04);mc1.lineWidth=fs1*pulse*0.62;mc1.strokeStyle='rgba(0,0,0,0.85)';mc1.strokeText(t1,0,0);mc1.fillStyle='rgba(0,0,0,0.85)';mc1.fillText(t1,0,0);mc1.restore();
+      gc2.drawImage(mask1,0,0);
+      ctx.drawImage(go,0,0);
+    });
+  }
   var oc=document.createElement('canvas');oc.width=W;oc.height=H;var cc=oc.getContext('2d');
   [[t1,W/2+shk,cy1,fs1*pulse,-0.035,-0.04],[t2||null,W/2-shk*0.5,cy2,fs2*pulse,-0.035,-0.04]].forEach(function(d){if(!d[0])return;cc.save();AT(cc,d[1],d[2],d[3],d[4],d[5]);var fg=cc.createLinearGradient(0,-d[3]*0.58,0,d[3]*0.58);col.stops.forEach(function(c,idx){fg.addColorStop(idx/(col.stops.length-1),c);});cc.fillStyle=fg;cc.fillText(d[0],0,0);cc.save();cc.beginPath();cc.rect(-W,-d[3]*0.6,W*2,d[3]*0.3);cc.clip();cc.globalAlpha=0.46;cc.fillStyle='rgba(255,255,248,1)';cc.fillText(d[0],0,0);cc.restore();cc.save();cc.beginPath();cc.rect(-W,d[3]*0.06,W*2,d[3]*0.09);cc.clip();cc.globalAlpha=0.18;cc.fillStyle='rgba(255,255,210,1)';cc.fillText(d[0],0,0);cc.restore();cc.restore();});
   cc.globalCompositeOperation='destination-in';cc.drawImage(os,0,0);
@@ -360,11 +379,11 @@ function render(t){
   var col=COLORS[0];for(var i=0;i<COLORS.length;i++){if(COLORS[i].id===useC){col=COLORS[i];break;}}
   var pulse=animOn?1+Math.sin(t*0.13)*0.045:1,shk=animOn?Math.sin(t*0.2)*2.5:0;
   // 横幅制限（係数を0.74→0.62に厳しく、最大幅も88%→78%に）
-  var maxFontW=Math.floor(W*0.78/Math.max(t1.length,1)/0.62);
+  var maxFontW=Math.floor(W*0.65/Math.max(t1.length,1)/0.62);
   // 縦幅制限
   var maxFontH=has2?Math.floor(H*0.38):Math.floor(H*0.65);
   var fs1=Math.min(130,maxFontW,maxFontH);
-  var maxFontW2=has2?Math.floor(W*0.78/Math.max(t2.length,1)/0.62):fs1;
+  var maxFontW2=has2?Math.floor(W*0.65/Math.max(t2.length,1)/0.62):fs1;
   var fs2=has2?Math.min(130,maxFontW2,maxFontH):fs1;
   if(!has2){drawTwoLines(t1,null,H/2,H/2,fs1,fs1,col,pulse,shk);}
   else{var h1=fs1*1.60*pulse,h2=fs2*1.60*pulse,sc2=(h1+h2)>H*0.92?H*0.92/(h1+h2):1,cy1=H/2-(h2*sc2)/2*0.85,cy2=H/2+(h1*sc2)/2*0.85;drawTwoLines(t1,t2,cy1,cy2,fs1,fs2,col,pulse,shk);}
@@ -441,7 +460,8 @@ document.getElementById('gifBtn').onclick=function(){makeGif(this);};
 document.getElementById('shareBtn').onclick=function(){window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent('#pachimoji #\u3080\u305f\u5de5\u623f'),'_blank');};
 function startAnim(){animOn=true;document.getElementById('animBtn').textContent='stop';document.getElementById('animBtn').classList.add('on');step();}
 function stopAnim(){animOn=false;cancelAnimationFrame(rafId);document.getElementById('animBtn').textContent='play';document.getElementById('animBtn').classList.remove('on');}
-function step(){animT++;render(animT);if(animOn)rafId=requestAnimationFrame(step);}
+var animTF=0; // 小数点対応のframeカウンター
+function step(){animTF+=0.5;animT=Math.floor(animTF);render(animT);if(animOn)rafId=requestAnimationFrame(step);}
 buildGrids();
 document.getElementById('t1').value='5000兆円';
 document.getElementById('t2').value='欲しい！';
