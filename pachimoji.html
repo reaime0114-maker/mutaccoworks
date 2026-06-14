@@ -393,7 +393,7 @@ function render(t){
   drawBg(useB,t);
   var t1=useT1,t2=useT2,has2=t2.trim().length>0;
   var col=COLORS[0];for(var i=0;i<COLORS.length;i++){if(COLORS[i].id===useC){col=COLORS[i];break;}}
-  var pulse=animOn?1+Math.sin(t*0.13)*0.045:1,shk=animOn?Math.sin(t*0.2)*2.5:0;
+  var pulse=animOn||gifRecording?1+Math.sin(t*0.13)*0.045:1,shk=animOn||gifRecording?Math.sin(t*0.2)*2.5:0;
   // 横幅制限（係数を0.74→0.62に厳しく、最大幅も88%→78%に）
   var maxFontW=Math.floor(W*0.60/Math.max(t1.length,1)/0.62);
   // 縦幅制限
