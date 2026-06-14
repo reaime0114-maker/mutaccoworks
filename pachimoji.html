@@ -312,7 +312,7 @@ function drawBg(id,t){
   rs();
 }
 
-function drawTwoLines(t1,t2,cy1,cy2,fs1,fs2,col,pulse,shk){
+function drawTwoLines(t1,t2,cy1,cy2,fs1,fs2,col,pulse,shk,animT){
   var font=fontOK?'\'Zen Black\'':'\'Hiragino Kaku Gothic ProN\',\'Meiryo\'';
   function AT(c,px,py,fs,skx,sky){c.translate(px,py);c.transform(1,sky,skx,1,0,0);c.font='900 '+fs+'px '+font+',sans-serif';c.textAlign='center';c.textBaseline='middle';c.lineJoin='round';c.miterLimit=1.5;}
   var os=document.createElement('canvas');os.width=W;os.height=H;var sc=os.getContext('2d');sc.fillStyle='#000';
@@ -367,7 +367,7 @@ function drawTwoLines(t1,t2,cy1,cy2,fs1,fs2,col,pulse,shk){
   ctx.save();[[t1,fs1,cy1,W/2+shk,-0.035,-0.04],[t2||null,fs2,cy2,W/2-shk*0.5,-0.035,-0.04]].forEach(function(d){if(!d[0])return;ctx.save();AT(ctx,d[3],d[2],d[1]*pulse,d[4],d[5]);ctx.shadowColor=col.glow;ctx.shadowBlur=d[1]*pulse*0.28;ctx.strokeStyle=col.glow+'20';ctx.lineWidth=d[1]*pulse*0.1;ctx.strokeText(d[0],0,0);ctx.restore();});ctx.restore();rs();
   ctx.drawImage(oc,0,0);
   // シャイン（アニメ中は動く、静止画は上から40%固定）
-  var shineP=animOn||gifRecording?(t*0.008)%1.0:0.4;
+  var shineP=animOn||gifRecording?(animT*0.035)%1.0:0.4;
   [[t1,cy1,fs1*pulse],[t2&&t2.trim().length>0?t2:null,cy2,fs2*pulse]].forEach(function(d){
     if(!d[0])return;
     var lineH=d[2]*1.2,top=d[1]-lineH*0.5,bot=d[1]+lineH*0.5,sw=lineH*0.6;
@@ -389,7 +389,7 @@ function render(t){
   var useB=animOn||gifRecording?lockedB:curB;
   var useC=animOn||gifRecording?lockedC:curC;
   var useT1=animOn||gifRecording?lockedT1:(document.getElementById('t1').value||'5000兆円');
-  var useT2=animOn||gifRecording?lockedT2:(document.getElementById('t2').value||'欲しい！');
+  var useT2=animOn||gifRecording?lockedT2:document.getElementById('t2').value;
   drawBg(useB,t);
   var t1=useT1,t2=useT2,has2=t2.trim().length>0;
   var col=COLORS[0];for(var i=0;i<COLORS.length;i++){if(COLORS[i].id===useC){col=COLORS[i];break;}}
@@ -401,8 +401,8 @@ function render(t){
   var fs1=Math.min(130,maxFontW,maxFontH);
   var maxFontW2=has2?Math.floor(W*0.60/Math.max(t2.length,1)/0.62):fs1;
   var fs2=has2?Math.min(130,maxFontW2,maxFontH):fs1;
-  if(!has2){drawTwoLines(t1,null,H/2,H/2,fs1,fs1,col,pulse,shk);}
-  else{var h1=fs1*1.60*pulse,h2=fs2*1.60*pulse,sc2=(h1+h2)>H*0.92?H*0.92/(h1+h2):1,cy1=H/2-(h2*sc2)/2*0.85,cy2=H/2+(h1*sc2)/2*0.85;drawTwoLines(t1,t2,cy1,cy2,fs1,fs2,col,pulse,shk);}
+  if(!has2){drawTwoLines(t1,null,H/2,H/2,fs1,fs1,col,pulse,shk,t);}
+  else{var h1=fs1*1.60*pulse,h2=fs2*1.60*pulse,sc2=(h1+h2)>H*0.92?H*0.92/(h1+h2):1,cy1=H/2-(h2*sc2)/2*0.85,cy2=H/2+(h1*sc2)/2*0.85;drawTwoLines(t1,t2,cy1,cy2,fs1,fs2,col,pulse,shk,t);}
   drawWatermark();
 }
 
@@ -435,7 +435,7 @@ document.getElementById('genBtn').onclick=function(){
   stopAnim();
   lockedB=curB;lockedC=curC;
   lockedT1=document.getElementById('t1').value||'5000兆円';
-  lockedT2=document.getElementById('t2').value||'欲しい！';
+  lockedT2=document.getElementById('t2').value;
   render(0);
 };
 cv.onclick=function(){if(animOn)stopAnim();else startAnim();};
