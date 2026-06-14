@@ -137,16 +137,11 @@ var BGS=[
 
 var curC='gold',curB='gold_bills',animOn=false,animT=0,rafId=null,fontOK=false;
 var lockedFs1=null,lockedFs2=null;
-// フォントロードを待ってから描画（ロード後に切り替わってずれるのを防ぐ）
-document.fonts.load('900 40px "Zen Black"').then(function(){
-  fontOK=true;
-}).catch(function(){}).finally(function(){
-  // フォントロード完了後（またはタイムアウト後）に初期描画
-  buildGrids();
-  document.getElementById('t1').value='5000兆円';
-  document.getElementById('t2').value='欲しい！';
-  render(0);
-});
+// iOSではZen Blackのレンダリングが不安定なため使用しない
+var isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)&&!window.MSStream;
+if(!isIOS){
+  document.fonts.load('900 40px "Zen Black"').then(function(){fontOK=true;if(!animOn)render(0);}).catch(function(){});
+}
 
 function miniPrev(mc,id){
   var c=mc.getContext('2d'),mw=mc.width,mh=mc.height;
@@ -476,6 +471,10 @@ document.getElementById('shareBtn').onclick=function(){window.open('https://twit
 function startAnim(){animOn=true;document.getElementById('animBtn').textContent='stop';document.getElementById('animBtn').classList.add('on');step();}
 function stopAnim(){animOn=false;cancelAnimationFrame(rafId);document.getElementById('animBtn').textContent='play';document.getElementById('animBtn').classList.remove('on');}
 function step(){animT++;render(animT);if(animOn)rafId=requestAnimationFrame(step);}
+buildGrids();
+document.getElementById('t1').value='5000兆円';
+document.getElementById('t2').value='欲しい！';
+render(0);
 })();
 </script>
 </body>
