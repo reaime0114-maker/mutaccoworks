@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <link href="https://fonts.googleapis.com/css2?family=Zen+Black&display=swap" rel="stylesheet">
-<title>パチ文字メーカー | むたっこ製作所</title>
-<meta name="description" content="パチンコ・スロット風のド派手な文字画像・アニメーションGIFが無料で作れる！文字を入力するだけで豪華な金文字・虹色・炎文字などのデザインに。登録不要・スマホ対応・即ダウンロード。X(Twitter)・Instagram・LINE・TikTokへそのまま投稿OK。パチ文字メーカーはむたっこ製作所の無料Webツールです。">
-<meta name="keywords" content="パチ文字メーカー,パチンコ風文字,パチンコ文字ジェネレーター,スロット風文字,派手な文字画像,金文字メーカー,虹色文字,炎文字,文字画像メーカー,GIFアニメ作成,GIFジェネレーター,無料文字画像,SNS用画像,X用画像,Twitter画像メーカー,インスタ用画像,面白画像メーカー,オリジナル画像,むたっこ製作所,Muta Works,pachinko text generator,slot style text,free GIF maker,text image generator,Japanese text art,gold text effect,rainbow text,free online tool">
+<title>パチ文字メーカー | 激アツ！パチンコ風文字を簡単作成</title>
+<meta name="description" content="パチ文字が無料で作れる！「5000兆円欲しい！」などのネットミーム・パチンコ・スロット風のド派手な文字画像・アニメーションGIFをすぐ作成。パチ文字メーカーで文字を入力するだけで豪華な金文字・虹色・炎文字などのパチ文字デザインに。登録不要・スマホ対応・即ダウンロード。X(Twitter)・Instagram・LINE・TikTokへそのまま投稿OK。むたっこ製作所の無料Webツールです。">
+<meta name="keywords" content="パチ文字,パチ文字メーカー,パチ文字作成,パチ文字ジェネレーター,パチンコ風文字,パチンコ文字ジェネレーター,スロット風文字,派手な文字画像,金文字メーカー,虹色文字,炎文字,文字画像メーカー,GIFアニメ作成,GIFジェネレーター,無料文字画像,SNS用画像,X用画像,Twitter画像メーカー,インスタ用画像,面白画像メーカー,オリジナル画像,むたっこ製作所,Muta Works,pachinko text generator,slot style text,free GIF maker,text image generator,Japanese text art,gold text effect,rainbow text,free online tool">
 <link rel="canonical" href="https://mutaccoworks.github.io/pachimoji.html">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -114,6 +114,12 @@ footer{width:100%;max-width:700px;padding:16px;text-align:center;font-size:10px;
     <button class="gen-btn" id="genBtn">GENERATE</button>
   </div>
   <div class="ad-mid">[ AD ]</div>
+</div>
+<div style="width:100%;max-width:700px;margin:0 auto;padding:16px 20px;color:#888;font-size:11px;line-height:1.9;text-align:left;box-sizing:border-box;">
+  <p style="margin:0 0 8px;font-size:12px;color:#aaa;font-weight:bold;">パチ文字メーカーとは？</p>
+  <p style="margin:0 0 10px;">パチンコ・スロット（パチスロ）風のド派手な<strong style="color:#bbb;">パチ文字</strong>・<strong style="color:#bbb;">パチンコ文字</strong>が無料で簡単に作れるジェネレーターです。オリジナルの派手文字ロゴをスマホでもすぐ作成できます。</p>
+  <p style="margin:0 0 10px;">「<strong style="color:#bbb;">5000兆円欲しい！</strong>」のようなネットミーム・ネタ画像の作成にも最適。パチ文字で作った<strong style="color:#bbb;">5000兆円</strong>画像はSNSで話題のフォーマットです。SNS投稿用・サムネイル作成・コラ画像・おもしろ画像・動画素材としてそのまま使えるフリー素材です。フォントや変換ツールを探している方にもおすすめ。登録不要・完全無料で使えます。</p>
+  <p style="margin:0;">文字を入力してGENERATEを押すだけ。メーカー・ジェネレーター・変換ツールとして、X（Twitter）・Instagram・LINE・TikTokへの投稿に最適なパチ文字画像をワンタップで作成できます。</p>
 </div>
 <footer>© 2026 Mutacco Works.</footer>
 <script>
@@ -385,6 +391,77 @@ function drawBg(id,t){
   rs();
 }
 
+// ===== dilate縁取りユーティリティ（バウンディングボックス限定・高速版）=====
+// 文字の形に沿った縁をピクセル膨張で生成してctxに直接描画する
+// txt: テキスト, cx/cy: 描画中心, fs: フォントサイズ
+// ox/oy: 位置オフセット, outerR: 外側膨張px, innerR: 内側くり抜きpx（0=文字本体のみ）
+// makeGrad: function(gc, w, h) → color string
+function drawDilateRim(txt, cx, cy, fs, ox, oy, outerR, innerR, makeGrad) {
+  var font='\'Hiragino Kaku Gothic ProN\',\'Meiryo\',sans-serif';
+  var pad=Math.ceil(outerR)+2;
+  var tw=Math.ceil(fs*txt.length*1.2)+pad*2;
+  var th=Math.ceil(fs*1.5)+pad*2;
+  var hw=tw/2, hh=th/2;
+
+  // 文字シルエット描画
+  var sc=document.createElement('canvas');sc.width=tw;sc.height=th;
+  var sctx=sc.getContext('2d');
+  sctx.font='900 '+fs+'px '+font;
+  sctx.textAlign='center';sctx.textBaseline='middle';
+  sctx.fillStyle='#fff';
+  sctx.fillText(txt,hw,hh);
+
+  var orig=sctx.getImageData(0,0,tw,th);
+  var sd=orig.data;
+
+  // 膨張（outerR）
+  function dilate(src,sw2,sh2,r){
+    var out=new Uint8ClampedArray(sw2*sh2*4);
+    for(var y=0;y<sh2;y++){
+      for(var x=0;x<sw2;x++){
+        var maxA=0;
+        for(var dy=-r;dy<=r&&maxA<255;dy++){
+          var ny=y+dy;if(ny<0||ny>=sh2)continue;
+          var dxm=Math.round(Math.sqrt(r*r-dy*dy));
+          for(var dx=-dxm;dx<=dxm;dx++){
+            var nx=x+dx;if(nx<0||nx>=sw2)continue;
+            var a=src[(ny*sw2+nx)*4+3];
+            if(a>maxA){maxA=a;if(maxA===255)break;}
+          }
+        }
+        var i=(y*sw2+x)*4;
+        out[i]=255;out[i+1]=255;out[i+2]=255;out[i+3]=maxA;
+      }
+    }
+    return out;
+  }
+
+  var outer=dilate(sd,tw,th,Math.ceil(outerR));
+  var inner=innerR>0 ? dilate(sd,tw,th,Math.ceil(innerR)) : sd;
+
+  // 縁だけ残す（outer - inner）
+  var ring=new Uint8ClampedArray(tw*th*4);
+  for(var i=0;i<ring.length;i+=4){
+    ring[i]=255;ring[i+1]=255;ring[i+2]=255;
+    ring[i+3]=Math.max(0,outer[i+3]-inner[i+3]);
+  }
+
+  var ringC=document.createElement('canvas');ringC.width=tw;ringC.height=th;
+  var rc=ringC.getContext('2d');
+  rc.putImageData(new ImageData(ring,tw,th),0,0);
+
+  // グラデーション塗り＋マスク
+  var go=document.createElement('canvas');go.width=tw;go.height=th;
+  var gc=go.getContext('2d');
+  gc.fillStyle=makeGrad(gc,tw,th);
+  gc.fillRect(0,0,tw,th);
+  gc.globalCompositeOperation='destination-in';
+  gc.drawImage(ringC,0,0);
+
+  // メインcanvasへ
+  ctx.drawImage(go, Math.round(cx+ox-hw), Math.round(cy+oy-hh));
+}
+
 function drawTwoLines(t1,t2,cy1,cy2,fs1,fs2,col,pulse,shk,animT){
   var font=fontOK?'\'Zen Black\'':'\'Hiragino Kaku Gothic ProN\',\'Meiryo\'';
   function AT(c,px,py,fs,skx,sky){c.translate(px,py);c.font='900 '+fs+'px '+font+',sans-serif';c.textAlign='center';c.textBaseline='middle';c.lineJoin='round';c.miterLimit=1.5;}
@@ -412,184 +489,28 @@ function drawTwoLines(t1,t2,cy1,cy2,fs1,fs2,col,pulse,shk,animT){
   sc.save();AT(sc,W/2+shk,cy1,fs1*pulse,-0.035,-0.04);sc.lineWidth=fs1*pulse*1.2;sc.strokeStyle='#000';sc.strokeText(t1,0,0);sc.fillText(t1,0,0);sc.restore();
   if(t2){sc.save();AT(sc,W/2+shk,cy2,fs2*pulse,-0.035,-0.04);sc.lineWidth=fs2*pulse*1.2;sc.strokeStyle='#000';sc.strokeText(t2,0,0);sc.fillText(t2,0,0);sc.restore();}
 
-  // ===== 縁取りレイヤー（奥から順に描く）=====
+  // ===== 縁取り（グラデ合成済みキャッシュをdrawImageするだけ）=====
   var isGoldRimColor=(col.id==='gold'||col.id==='fire'||col.id==='green'||col.id==='rainbow');
-  console.log('col.id='+col.id+' isGold='+isGoldRimColor);
-
-  // 【最奥0】発光（非表示）
-  /*
-  var glowCol=isGoldRimColor?'rgba(255,200,0,':'rgba(180,210,255,';
-  [[t1,W/2+shk,cy1,fs1*pulse],[t2||null,W/2+shk,cy2,fs2*pulse]].forEach(function(d){
-    if(!d[0])return;
-    [
-      [1.4, glowCol,              0.25],
-      [1.15,'rgba(255,255,255,',  0.80],
-    ].forEach(function(p){
-      ctx.save();
-      var off=d[3]*(p[0]-1)*2;
-      AT(ctx,d[1]+off,d[2]+off*1.3,d[3]*p[0],-0.035,-0.04);
-      ctx.fillStyle=p[1]+p[2]+')';
-      ctx.fillText(d[0],0,0);
-      ctx.lineWidth=d[3]*p[0]*0.2;
-      ctx.strokeStyle=p[1]+p[2]+')';
-      ctx.strokeText(d[0],0,0);
-      ctx.restore();
-    });
-  });
-
-  */
-
-  // 【最奥0】3層の発光（文字輪郭に沿ったオーラ）
-  var glowLayers=isGoldRimColor||col.id==='rainbow'
-    ? [
-        [0.15, '#ffb100', 0.18],  // 外層：広く弱く
-        [0.10, '#ffd84d', 0.32],  // 中層
-        [0.05, '#fff6c7', 0.55],  // 内層：狭く強く
-      ]
-    : [
-        [0.15, '#aaccff', 0.18],
-        [0.10, '#cce0ff', 0.32],
-        [0.05, '#eef4ff', 0.55],
-      ];
-
-  [[t1,W/2+shk,cy1,fs1*pulse],[t2||null,W/2+shk,cy2,fs2*pulse]].forEach(function(d){
-    if(!d[0])return;
-    glowLayers.forEach(function(gl){
-      var glCanvas=document.createElement('canvas');glCanvas.width=W;glCanvas.height=H;
-      var glc=glCanvas.getContext('2d');
-      glc.save();
-      AT(glc,d[1],d[2],d[3],-0.035,-0.04);
-      glc.shadowBlur=d[3]*gl[0];
-      glc.shadowColor=gl[1];
-      glc.strokeStyle=gl[1];
-      glc.lineWidth=d[3]*0.01;
-      glc.globalAlpha=gl[2];
-      glc.strokeText(d[0],0,0);
-      glc.fillStyle=gl[1];
-      glc.fillText(d[0],0,0);
-      glc.restore();
-      ctx.drawImage(glCanvas,0,0);
-    });
-  });
   var outerCycle=isGoldRimColor
-    ? ['#000000','#000000','#1a0a00','#2d1500','#1a0a00','#000000','#000000','#1a0a00','#2d1500','#fff9d6','#2d1500','#000000']
-    : ['#000000','#000000','#050d10','#0a1820','#050d10','#000000','#000000','#050d10','#0a1820','#c0d8e8','#0a1820','#000000'];
-  [[t1,W/2+shk,cy1,fs1*pulse],[t2||null,W/2+shk,cy2,fs2*pulse]].forEach(function(d){
-    if(!d[0])return;
-    var cx_=d[1],cy2_=d[2],fs=d[3];
-    var chars=d[0].split('');
-    var totalW2=0;
-    var tmpC2=document.createElement('canvas').getContext('2d');
-    tmpC2.font='900 '+fs+'px '+(fontOK?'\'Zen Black\'':'\'Hiragino Kaku Gothic ProN\',\'Meiryo\'')+',sans-serif';
-    var widths2=chars.map(function(c){var w=tmpC2.measureText(c).width;totalW2+=w;return w;});
-    var startX2=cx_-totalW2/2;
-    chars.forEach(function(ch,idx){
-      var charW2=widths2[idx];
-      var charCX2=startX2+charW2/2;
-      startX2+=charW2;
-      var fs2_=fs*1.0;
-      var go=document.createElement('canvas');go.width=W;go.height=H;var gc=go.getContext('2d');
-      gc.save();AT(gc,charCX2+fs2_*0.12,cy2_+fs2_*0.10,fs2_,-0.035,-0.04);
-      var g=gc.createLinearGradient(-charW2*0.6,-fs2_*0.6,charW2*0.6,fs2_*0.6);
-      var gSteps=80;
-      for(var si=0;si<=gSteps;si++){
-        var t_=si/gSteps;
-        var pos=t_*outerCycle.length*2;
-        var ci=Math.floor(pos)%outerCycle.length;
-        var cj=(ci+1)%outerCycle.length;
-        var frac=pos-Math.floor(pos);
-        function lhO(a,b,f){
-          var r=Math.round(parseInt(a.slice(1,3),16)*(1-f)+parseInt(b.slice(1,3),16)*f);
-          var gv=Math.round(parseInt(a.slice(3,5),16)*(1-f)+parseInt(b.slice(3,5),16)*f);
-          var bl=Math.round(parseInt(a.slice(5,7),16)*(1-f)+parseInt(b.slice(5,7),16)*f);
-          return '#'+('0'+r.toString(16)).slice(-2)+('0'+gv.toString(16)).slice(-2)+('0'+bl.toString(16)).slice(-2);
-        }
-        g.addColorStop(t_,lhO(outerCycle[ci],outerCycle[cj],frac));
-      }
-      gc.strokeStyle=g;gc.lineWidth=fs2_*0.38;gc.lineJoin='round';gc.miterLimit=1;
-      gc.shadowBlur=fs2_*0.03;gc.shadowColor='#000000';
-      gc.strokeText(ch,0,0);
-      gc.globalCompositeOperation='destination-out';
-      gc.fillStyle='#000';gc.fillText(ch,0,0);
-      gc.restore();
-      ctx.drawImage(go,0,0);
-    });
-  });
-
-  // 【最奥+1】暗い縁と金/銀縁の間の細い黒縁
-  [[t1,W/2+shk,cy1,fs1*pulse],[t2||null,W/2+shk,cy2,fs2*pulse]].forEach(function(d){
-    if(!d[0])return;
-    var off=d[3]*0.06;
-    ctx.save();AT(ctx,d[1]+off,d[2]+d[3]*0.05,d[3],-0.035,-0.04);
-    ctx.lineWidth=d[3]*0.24;
-    ctx.strokeStyle='#000';
-    ctx.lineJoin='miter';
-    ctx.miterLimit=100;
-    ctx.strokeText(d[0],0,0);
-    ctx.restore();
-  });
-
-  // 【1番奥】全カラー共通の縁（Gold/Fire/Greenは金色、それ以外は銀色）
+    ?['#000000','#0d0500','#1a0a00','#2d1500','#3d1e00','#4a2500','#3d1e00','#2d1500','#3d1e00','#5a3500','#3d1e00','#000000']
+    :['#000000','#050d10','#0a1820','#1a2e40','#2a4560','#1a2e40','#0a1820','#1a2e40','#2a4560','#aaccdd','#2a4560','#000000'];
   var rimCycle=isGoldRimColor
-    ? ['#fff9d6','#ffe27a','#ffb100','#ffb100','#c98b00','#7d4b00','#4d2c00','#7d4b00','#ffb100','#ffe27a']
-    : ['#ffffff','#d8e8f0','#a0b8cc','#a0b8cc','#607080','#304050','#182830','#304050','#a0b8cc','#d8e8f0'];
+    ?['#fff9d6','#ffe27a','#ffb100','#ffb100','#c98b00','#7d4b00','#4d2c00','#7d4b00','#ffb100','#ffe27a']
+    :['#ffffff','#ffffff','#e0eeff','#b0ccee','#607080','#304050','#182830','#304050','#b0ccee','#e0eeff'];
+  function lhC(a,b,f){var r=Math.round(parseInt(a.slice(1,3),16)*(1-f)+parseInt(b.slice(1,3),16)*f);var gv=Math.round(parseInt(a.slice(3,5),16)*(1-f)+parseInt(b.slice(3,5),16)*f);var bl=Math.round(parseInt(a.slice(5,7),16)*(1-f)+parseInt(b.slice(5,7),16)*f);return '#'+('0'+r.toString(16)).slice(-2)+('0'+gv.toString(16)).slice(-2)+('0'+bl.toString(16)).slice(-2);}
 
   [[t1,W/2+shk,cy1,fs1*pulse],[t2||null,W/2+shk,cy2,fs2*pulse]].forEach(function(d){
     if(!d[0])return;
-    var cx_=d[1],cy2_=d[2],fs=d[3];
-    var chars=d[0].split('');
-    var totalW2=0;
-    var tmpC2=document.createElement('canvas').getContext('2d');
-    tmpC2.font='900 '+fs+'px '+(fontOK?'\'Zen Black\'':'\'Hiragino Kaku Gothic ProN\',\'Meiryo\'')+',sans-serif';
-    var widths2=chars.map(function(c){var w=tmpC2.measureText(c).width;totalW2+=w;return w;});
-    var startX2=cx_-totalW2/2;
-
-    chars.forEach(function(ch,idx){
-      var charW2=widths2[idx];
-      var charCX2=startX2+charW2/2;
-      startX2+=charW2;
-
-      var fs2_=fs*1.0;
-      var go=document.createElement('canvas');go.width=W;go.height=H;var gc=go.getContext('2d');
-      gc.save();AT(gc,charCX2+fs2_*0.05,cy2_+fs2_*0.03,fs2_,-0.035,-0.04);
-      var g=gc.createLinearGradient(-charW2*0.6,-fs2_*0.6,charW2*0.6,fs2_*0.6);
-      var gStops=[];
-      var steps=80;
-      for(var si=0;si<=steps;si++){
-        var t_=si/steps;
-        var pos=t_*rimCycle.length*2;
-        var ci=Math.floor(pos)%rimCycle.length;
-        var cj=(ci+1)%rimCycle.length;
-        var frac=pos-Math.floor(pos);
-        function lh(a,b,f){
-          var r=Math.round(parseInt(a.slice(1,3),16)*(1-f)+parseInt(b.slice(1,3),16)*f);
-          var gv=Math.round(parseInt(a.slice(3,5),16)*(1-f)+parseInt(b.slice(3,5),16)*f);
-          var bl=Math.round(parseInt(a.slice(5,7),16)*(1-f)+parseInt(b.slice(5,7),16)*f);
-          return '#'+('0'+r.toString(16)).slice(-2)+('0'+gv.toString(16)).slice(-2)+('0'+bl.toString(16)).slice(-2);
-        }
-        gStops.push([t_,lh(rimCycle[ci],rimCycle[cj],frac)]);
-      }
-      gStops.forEach(function(s){g.addColorStop(s[0],s[1]);});
-      gc.strokeStyle=g;gc.lineWidth=fs2_*0.22;gc.lineJoin='round';gc.lineCap='round';gc.miterLimit=1;
-      gc.strokeText(ch,0,0);
-      gc.globalCompositeOperation='destination-out';
-      gc.fillStyle='#000';gc.fillText(ch,0,0);
-      gc.restore();
-      ctx.drawImage(go,0,0);
-    });
-  });
-
-  // 【2番目】金縁・銀縁の外側の細い黒縁
-
-  // 【3番目】黒縁（全カラー共通・右下にずらして立体感）
-  [[t1,W/2+shk,cy1,fs1*pulse],[t2||null,W/2+shk,cy2,fs2*pulse]].forEach(function(d){
-    if(!d[0])return;
-    var off=d[3]*0.025;
-    ctx.save();AT(ctx,d[1]+off,d[2]+off,d[3],-0.035,-0.04);
-    ctx.lineWidth=d[3]*0.15;
-    ctx.strokeStyle='#000';
-    ctx.lineJoin='round';
-    ctx.strokeText(d[0],0,0);
+    var txt=d[0], cx_=d[1], cy_=d[2], fs=d[3];
+    var rr=getDilateRings(txt, Math.round(fs), col.id, outerCycle, rimCycle, lhC);
+    ctx.drawImage(rr.outer, Math.round(cx_+fs*0.13-rr.hw), Math.round(cy_+fs*0.13-rr.hh));
+    ctx.drawImage(rr.rim,   Math.round(cx_+fs*0.07-rr.hw), Math.round(cy_+fs*0.09-rr.hh));
+    ctx.drawImage(rr.mid,   Math.round(cx_+fs*0.07-rr.hw), Math.round(cy_+fs*0.09-rr.hh));
+    ctx.drawImage(rr.black, Math.round(cx_+fs*0.05-rr.hw), Math.round(cy_+fs*0.05-rr.hh));
+    // 隙間埋め
+    ctx.save();AT(ctx,cx_+fs*0.05,cy_+fs*0.05,fs,-0.035,-0.04);
+    ctx.fillStyle='#000';ctx.fillText(txt,0,0);
+    ctx.lineWidth=fs*0.13;ctx.strokeStyle='#000';ctx.lineJoin='round';ctx.strokeText(txt,0,0);
     ctx.restore();
   });
   // 縁取りを縦グラデーションで金属感を出す関数
@@ -732,7 +653,9 @@ function drawTwoLines(t1,t2,cy1,cy2,fs1,fs2,col,pulse,shk,animT){
   }
   */
   var oc=document.createElement('canvas');oc.width=W;oc.height=H;var cc=oc.getContext('2d');
-  [[t2||null,W/2+shk,cy2,fs2*pulse,-0.035,-0.04],[t1,W/2+shk,cy1,fs1*pulse,-0.035,-0.04]].forEach(function(d){if(!d[0])return;cc.save();AT(cc,d[1],d[2],d[3],d[4],d[5]);
+  var faceOY=0.03; // 文字本体だけ下にずらすオフセット
+  var faceOX=0.03; // 文字本体だけ右にずらすオフセット
+  [[t2||null,W/2+shk,cy2,fs2*pulse,-0.035,-0.04],[t1,W/2+shk,cy1,fs1*pulse,-0.035,-0.04]].forEach(function(d){if(!d[0])return;cc.save();AT(cc,d[1]+d[3]*faceOX,d[2]+d[3]*faceOY,d[3],d[4],d[5]);
     var fg=cc.createLinearGradient(0,-d[3]*0.58,0,d[3]*0.58);
     col.faceStops.forEach(function(s){fg.addColorStop(s[0],s[1]);});
     cc.lineWidth=d[3]*0.035;cc.strokeStyle=fg;cc.lineJoin='round';
@@ -746,7 +669,7 @@ function drawTwoLines(t1,t2,cy1,cy2,fs1,fs2,col,pulse,shk,animT){
   // 1文字ずつ個別に局所反射を適用
   [[t2||null,W/2+shk,cy2,fs2*pulse],[t1,W/2+shk,cy1,fs1*pulse]].forEach(function(d){
     if(!d[0])return;
-    var cx=d[1],cy_=d[2],fs=d[3];
+    var cx=d[1]+d[3]*faceOX,cy_=d[2]+d[3]*faceOY,fs=d[3];
     var chars=d[0].split('');
     var totalW=0;
     var tmpC=document.createElement('canvas').getContext('2d');
@@ -821,20 +744,19 @@ function drawTwoLines(t1,t2,cy1,cy2,fs1,fs2,col,pulse,shk,animT){
       );
     });
   });
-  // シャイン（横方向・ギラッと光る）
-  var shineP=animOn||gifRecording?(animT*0.010)%1.0:0.4;
+  // シャイン（横方向・ギラッと光る）速度そのまま・頻度3倍
+  var shinePhases=[0, 0.33, 0.67]; // 3本を位相ずらして同時に走らせる
   [[t1,cy1,fs1*pulse],[t2&&t2.trim().length>0?t2:null,cy2,fs2*pulse]].forEach(function(d){
     if(!d[0])return;
     var lineH=d[2]*1.2,top=d[1]-lineH*0.5,bot=d[1]+lineH*0.5;
-    // 右下→左上に流れる（1→0方向）
-    var sp=1.0-(animOn||gifRecording?(animT*0.010)%1.0:0.4);
-    var sx=W*(-0.5)+W*3.0*sp;
-    var sy=H*(-0.5)+H*3.0*sp;
-    var sw=W*0.18;
-    var shDx=sw;
-    var shDy=sw;
 
-    function makeShineCanvas(maskCanvas){
+    function makeShineCanvas(maskCanvas, sp_){
+      var sp=1.0-sp_;
+      var sx=W*(-0.5)+W*3.0*sp;
+      var sy=H*(-0.5)+H*3.0*sp;
+      var sw=W*0.18;
+      var shDx=sw;
+      var shDy=sw;
       var sgo=document.createElement('canvas');sgo.width=W;sgo.height=H;var sgc=sgo.getContext('2d');
       sgc.save();sgc.beginPath();sgc.rect(0,top,W,bot-top);sgc.clip();
       var sc1=isGoldRimColor?'rgba(248,248,248,0)':'rgba(240,243,255,0)';
@@ -869,7 +791,10 @@ function drawTwoLines(t1,t2,cy1,cy2,fs1,fs2,col,pulse,shk,animT){
     }
 
     // 文字面にシャイン
-    makeShineCanvas(oc);
+    shinePhases.forEach(function(phase){
+      var sp_=(animOn||gifRecording?(animT*0.010+phase)%1.0:0.4);
+      makeShineCanvas(oc, sp_);
+    });
 
     // 金縁・銀縁にもシャイン（全カラー）
     {
@@ -877,7 +802,6 @@ function drawTwoLines(t1,t2,cy1,cy2,fs1,fs2,col,pulse,shk,animT){
       var fs_=d[0]===t1?fs1*pulse:fs2*pulse;
       var cx_=d[0]===t1?W/2+shk:W/2-shk*0.5;
       var cy__=d[0]===t1?cy1:cy2;
-      // 金縁のシルエットを作る
       var chars2=d[0].split('');var tw2=0;
       var tc2=document.createElement('canvas').getContext('2d');
       tc2.font='900 '+fs_+'px '+(fontOK?'\'Zen Black\'':'\'Hiragino Kaku Gothic ProN\',\'Meiryo\'')+',sans-serif';
@@ -891,7 +815,10 @@ function drawTwoLines(t1,t2,cy1,cy2,fs1,fs2,col,pulse,shk,animT){
         rmc.lineWidth=fs_*0.05;rmc.strokeStyle='#000';rmc.strokeText(ch,0,0);
         rmc.fillStyle='#000';rmc.fillText(ch,0,0);rmc.restore();
       });
-      makeShineCanvas(rimMaskC);
+      shinePhases.forEach(function(phase){
+        var sp_=(animOn||gifRecording?(animT*0.010+phase)%1.0:0.4);
+        makeShineCanvas(rimMaskC, sp_);
+      });
     }
   });
 }
@@ -1069,10 +996,157 @@ function showAdModal(cb){
 }
 function drawWatermark(){ctx.save();ctx.globalAlpha=0.65;ctx.fillStyle='#ffffff';ctx.font='14px sans-serif';ctx.textAlign='left';ctx.textBaseline='bottom';ctx.fillText('パチ文字メーカー',10,H-16);ctx.fillText('むたっこ製作所',10,H-4);ctx.restore();}
 var lockedB='gold_bills',lockedC='gold',lockedT1='5000兆円',lockedT2='欲しい！';
+
+// dilate＋グラデ合成済みcanvasをキャッシュ
+// キー: txt|fs|colId → {outer, mid, rim, black, tw, th, hw, hh}
+var dilateCache={};
+
+function getDilateRings(txt, fs, colId, outerCycle, rimCycle, lhC) {
+  var key=txt+'|'+Math.round(fs)+'|'+colId;
+  if(dilateCache[key]) return dilateCache[key];
+
+  var font='\'Hiragino Kaku Gothic ProN\',\'Meiryo\',sans-serif';
+  var SC=2;
+  var fs2=fs*SC;
+  // 各縁完全独立（見た目の値×2）
+  var outerOuter=Math.round(fs2*0.14), outerInner=Math.round(fs2*0.001); // 最奥縁
+  var midOuter  =Math.round(fs2*0.09), midInner  =Math.round(fs2*0.07); // 中間黒縁
+  var rimOuter  =Math.round(fs2*0.09), rimInner  =Math.round(fs2*0.01); // 金銀縁
+  var blkOuter  =Math.round(fs2*0.05);                                   // 立体黒縁
+  var pad=outerOuter+2;
+  var th=Math.ceil(fs2*1.5)+pad*2;
+  var hh=th/2;
+
+  var measC=document.createElement('canvas').getContext('2d');
+  measC.font='900 '+fs2+'px '+font;
+  var chars=txt.split('');
+  var charWidths=chars.map(function(c){return Math.ceil(measC.measureText(c).width);});
+  var totalW=charWidths.reduce(function(a,b){return a+b;},0);
+  var tw=totalW+pad*2;
+  var hw=tw/2;
+
+  function dilateChar(ch, cw) {
+    var ctw=cw+pad*2, cth=th;
+    var sc=document.createElement('canvas');sc.width=ctw;sc.height=cth;
+    var sctx=sc.getContext('2d');
+    sctx.font='900 '+fs2+'px '+font;
+    sctx.textAlign='center';sctx.textBaseline='middle';
+    sctx.fillStyle='#fff';sctx.fillText(ch,ctw/2,cth/2);
+    var sd=sctx.getImageData(0,0,ctw,cth).data;
+
+    // Meijster距離変換
+    var g=new Int32Array(ctw*cth);
+    for(var x=0;x<ctw;x++){
+      var d=ctw*cth;
+      for(var y=0;y<cth;y++){if(sd[(y*ctw+x)*4+3]>0)d=0;else if(d<ctw*cth)d++;g[y*ctw+x]=d;}
+      d=ctw*cth;
+      for(var y=cth-1;y>=0;y--){if(sd[(y*ctw+x)*4+3]>0)d=0;else if(d<ctw*cth)d++;if(d<g[y*ctw+x])g[y*ctw+x]=d;}
+    }
+    var s2=new Int32Array(ctw),t2=new Int32Array(ctw),dist2=new Int32Array(ctw*cth);
+    function f2(x,i,gy){var dx=x-i;return dx*dx+gy*gy;}
+    function sep(i,u,gi,gu){return Math.floor((u*u-i*i+gu*gu-gi*gi)/(2*(u-i)));}
+    for(var y=0;y<cth;y++){
+      var row=y*ctw,q2=0;s2[0]=0;t2[0]=0;
+      for(var u=1;u<ctw;u++){
+        while(q2>=0&&f2(t2[q2],s2[q2],g[row+s2[q2]])>=f2(t2[q2],u,g[row+u]))q2--;
+        if(q2<0){q2=0;s2[0]=u;}
+        else{var w=1+sep(s2[q2],u,g[row+s2[q2]],g[row+u]);if(w<ctw){q2++;s2[q2]=u;t2[q2]=w;}}
+      }
+      for(var u=ctw-1;u>=0;u--){dist2[row+u]=f2(u,s2[q2],g[row+s2[q2]]);if(u===t2[q2])q2--;}
+    }
+
+    var oO2=outerOuter*outerOuter, oI2=outerInner*outerInner;
+    var mO2=midOuter*midOuter,     mI2=midInner*midInner;
+    var rO2=rimOuter*rimOuter,     rI2=rimInner*rimInner;
+    var bO2=blkOuter*blkOuter;
+    var nPix=ctw*cth;
+    var outerA=new Uint8Array(nPix),outerIA=new Uint8Array(nPix);
+    var midA  =new Uint8Array(nPix),midIA  =new Uint8Array(nPix);
+    var rimA  =new Uint8Array(nPix),rimIA  =new Uint8Array(nPix);
+    var blkA  =new Uint8Array(nPix);
+    for(var i=0;i<nPix;i++){
+      if(sd[i*4+3]>0)continue;
+      var d=dist2[i];
+      if(d<=oO2)outerA[i]=255;
+      if(d<=oI2)outerIA[i]=255;
+      if(d<=mO2)midA[i]=255;
+      if(d<=mI2)midIA[i]=255;
+      if(d<=rO2)rimA[i]=255;
+      if(d<=rI2)rimIA[i]=255;
+      if(d<=bO2)blkA[i]=255;
+    }
+    var outerOnly=new Uint8Array(nPix),midOnly=new Uint8Array(nPix),rimOnly=new Uint8Array(nPix),blkOnly=new Uint8Array(nPix);
+    for(var i=0;i<nPix;i++){
+      outerOnly[i]=Math.max(0,outerA[i]-outerIA[i]);
+      midOnly[i]  =Math.max(0,midA[i]  -midIA[i]);
+      rimOnly[i]  =Math.max(0,rimA[i]  -rimIA[i]);
+      blkOnly[i]  =Math.max(0,blkA[i]  -sd[i*4+3]);
+    }
+
+    function cycleGrad(gc,cycle){
+      var g=gc.createLinearGradient(0,0,ctw/SC,cth/SC);var n=36;
+      for(var si=0;si<=60;si++){var t_=si/60,pos=t_*n,ci=Math.floor(pos)%cycle.length,cj=(ci+1)%cycle.length;g.addColorStop(t_,lhC(cycle[ci],cycle[cj],pos-Math.floor(pos)));}
+      return g;
+    }
+    function makeRing(alphaArr, makeGrad){
+      var px=new Uint8ClampedArray(nPix*4);
+      for(var i=0;i<nPix;i++){px[i*4]=px[i*4+1]=px[i*4+2]=255;px[i*4+3]=alphaArr[i];}
+      var mc=document.createElement('canvas');mc.width=ctw;mc.height=cth;
+      mc.getContext('2d').putImageData(new ImageData(px,ctw,cth),0,0);
+      var sw=Math.round(ctw/SC),sh=Math.round(cth/SC);
+      var small=document.createElement('canvas');small.width=sw;small.height=sh;
+      var sc2=small.getContext('2d');
+      sc2.filter='blur(0.6px)';
+      sc2.drawImage(mc,0,0,sw,sh);
+      sc2.filter='none';
+      var go=document.createElement('canvas');go.width=sw;go.height=sh;
+      var gc=go.getContext('2d');
+      gc.fillStyle=makeGrad(gc);gc.fillRect(0,0,sw,sh);
+      gc.globalCompositeOperation='destination-in';gc.drawImage(small,0,0);
+      return go;
+    }
+    return {
+      outer: makeRing(outerOnly, function(gc){return cycleGrad(gc,outerCycle);}),
+      mid:   makeRing(midOnly,   function(gc){return '#000';}),
+      rim:   makeRing(rimOnly,   function(gc){return cycleGrad(gc,rimCycle);}),
+      black: makeRing(blkOnly,   function(gc){return '#000';}),
+      sw: Math.round(ctw/SC), sh: Math.round(cth/SC), hw: Math.round(ctw/SC/2)
+    };
+  }
+
+  // 1文字ずつdilateして全体canvasにmerge
+  var tw1=Math.round(tw/SC), th1=Math.round(th/SC);
+  var merged={outer:null,mid:null,rim:null,black:null};
+  ['outer','mid','rim','black'].forEach(function(k){
+    merged[k]=document.createElement('canvas');merged[k].width=tw1;merged[k].height=th1;
+  });
+  var startX=pad;
+  chars.forEach(function(ch,idx){
+    var cw=charWidths[idx];
+    var rings=dilateChar(ch,cw);
+    var dx=Math.round(startX/SC)-rings.hw+Math.round((cw/SC)/2);
+    ['outer','mid','rim','black'].forEach(function(k){
+      merged[k].getContext('2d').drawImage(rings[k], dx, 0);
+    });
+    startX+=cw;
+  });
+
+  var hw1=tw1/2, hh1=Math.round(th/SC/2);
+  var result={
+    outer:merged.outer, mid:merged.mid, rim:merged.rim, black:merged.black,
+    tw:tw1, th:th1, hw:hw1, hh:hh1
+  };
+  dilateCache[key]=result;
+  return result;
+}
+
+function buildRimCache(){}  // 互換ダミー
+
 document.getElementById('genBtn').onclick=function(){
   lockedB=curB;lockedC=curC;
   lockedT1=document.getElementById('t1').value||'5000兆円';
   lockedT2=document.getElementById('t2').value;
+  dilateCache={}; // キャッシュリセット
   if(!animOn){startAnim();}
 };
 cv.onclick=function(){if(animOn)stopAnim();else startAnim();};
