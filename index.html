@@ -4,6 +4,7 @@
 <link rel="icon" href="images/icon.png">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light only">
 <title>むたっこ製作所 — あったらいいなが、ここにある。| Muta Works</title>
 <meta name="description" content="むたっこ製作所はあったらいいなを形にする無料Webツール集。パチンコ・スロット風の豪華な文字画像・GIFアニメが作れる「パチ文字メーカー」など、登録不要・スマホ対応・完全無料のツールを公開中。SNSやXへの投稿にぴったり。Muta Works offers free web tools including pachinko-style text & GIF generator.">
 <meta name="keywords" content="むたっこ製作所,Muta Works,無料Webツール,無料オンラインツール,パチ文字メーカー,パチンコ風文字,スロット風文字,文字画像メーカー,GIFアニメ作成,SNS用画像,面白ツール,暇つぶしツール,X用画像,Twitter用画像,インスタ用画像,スマホ対応,登録不要,完全無料,free web tools,free online tools,pachinko text generator,text image maker,GIF animation maker,Japanese fun tools">
@@ -103,16 +104,16 @@ header{
   line-height:1.9;color:#0a0a0a;font-weight:900;
   margin-bottom:12px;
   text-shadow:
-    2px 2px 0 rgba(1,145,162,0.25),
-    4px 4px 0 rgba(1,145,162,0.12),
+    0 2px 0 rgba(1,145,162,0.2),
+    0 4px 0 rgba(1,145,162,0.1),
     0 1px 8px rgba(0,0,0,0.08);
   letter-spacing:-0.01em;
 }
 .hero-title-ja .accent{
   color:var(--accent);
   text-shadow:
-    2px 2px 0 rgba(1,145,162,0.4),
-    4px 4px 0 rgba(1,145,162,0.2);
+    0 2px 0 rgba(1,145,162,0.35),
+    0 4px 0 rgba(1,145,162,0.15);
 }
 .hero-title-en{
   font-family:'Press Start 2P',monospace;
@@ -146,14 +147,30 @@ header{
 
 /* 統計バー */
 .hero-stats{
-  display:flex;align-items:center;gap:24px;
+  display:inline-flex;align-items:center;gap:24px;
   padding:18px 20px;
   background:var(--surface);
-  border:2px solid var(--border);
-  border-radius:var(--r);
+  border:2.5px solid var(--accent);
   max-width:100%;
-  display:inline-flex;
+  position:relative;
+  clip-path:polygon(
+    0 12px, 12px 0,
+    calc(100% - 12px) 0, 100% 12px,
+    100% calc(100% - 12px), calc(100% - 12px) 100%,
+    12px 100%, 0 calc(100% - 12px)
+  );
+  box-shadow:inset 0 0 0 2px var(--accent-mid);
 }
+.hero-stats::before,.hero-stats::after{
+  content:"◆";
+  font-size:14px;
+  color:var(--accent);
+  position:absolute;
+  line-height:1;
+  z-index:1;
+}
+.hero-stats::before{top:6px;left:8px;}
+.hero-stats::after{bottom:6px;right:8px;}
 .stat-num{
   font-family:'Press Start 2P',monospace;
   font-size:18px;color:var(--text);letter-spacing:-0.01em;line-height:1;
