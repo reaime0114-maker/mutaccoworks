@@ -4,6 +4,10 @@
 <link rel="icon" href="images/icon.png">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+@font-face{font-family:'ZeroGothic';src:url('fonts/ZeroGothic.otf');}
+@font-face{font-family:'DokiDokiFantasia';src:url('fonts/DokiDokiFantasia.otf');}
+</style>
 <link href="https://fonts.googleapis.com/css2?family=M+PLUS+1p:wght@900&family=Potta+One&family=Rampart+One&family=DotGothic16&family=Mochiy+Pop+P+One&family=WDXL+Lubrifont+JP+N&family=Zen+Black&family=Noto+Serif+JP:wght@900&family=Yuji+Syuku&family=Kaisei+Decol:wght@700&family=Pirata+One&display=swap" rel="stylesheet">
 <title>スタンプメーカー | むたっこ製作所</title>
 <meta name="description" content="Teams・Slack・Discord用のカスタムスタンプ・絵文字が無料で作れる！テキストや画像をアップロードしてアニメーションGIFも作成。登録不要・スマホ対応。むたっこ製作所の無料Webツール。">
@@ -32,8 +36,8 @@ header{width:100%;max-width:800px;padding:2px 16px 0}
 .top-banner-en{font-size:9px;color:#0191a2;letter-spacing:0.5px;font-family:sans-serif;white-space:nowrap}
 .top-banner-btn{background:linear-gradient(90deg,#005f6b,#0191a2,#00d4e8,#0191a2,#005f6b);background-size:300%;color:#fff;font-size:12px;font-weight:bold;padding:8px 14px;border-radius:20px;letter-spacing:1px;font-family:'Zen Black',sans-serif;white-space:nowrap;box-shadow:0 2px 12px rgba(1,145,162,0.5);animation:gbg 2s linear infinite}
 @keyframes arrow-blink{0%,100%{opacity:1}50%{opacity:0.3}}
-.logo-ja{font-size:15px;letter-spacing:3px;color:#fff;line-height:1.2}
-.logo-en{font-size:9px;letter-spacing:2px;color:#fff;font-family:sans-serif}
+.logo-ja{font-size:15px;letter-spacing:3px;color:#111;line-height:1.2}
+.logo-en{font-size:9px;letter-spacing:2px;color:#888;font-family:sans-serif}
 
 .main{width:100%;max-width:800px;padding:0 12px;display:flex;flex-direction:column;gap:12px}
 
@@ -388,7 +392,7 @@ footer{width:100%;max-width:800px;padding:16px;text-align:center;font-size:10px;
                 <!-- 吹き出し＋リアクション -->
                 <div style="position:relative;display:inline-block;margin-bottom:16px">
                   <div style="background:#fff;border-radius:4px 12px 12px 12px;padding:8px 12px;font-size:18px;color:#333;box-shadow:0 1px 3px rgba(0,0,0,0.1)">お願い！</div>
-                  <div style="position:absolute;bottom:-25px;left:10px;background:#fff;border:1px solid #ddd;border-radius:10px;padding:1px 6px;font-size:11px;display:inline-flex;align-items:center;gap:3px;box-shadow:0 1px 2px rgba(0,0,0,0.1)">
+                  <div style="position:absolute;bottom:-25px;left:10px;background:#fff;border:1px solid #ddd;border-radius:999px;padding:2px 8px;font-size:11px;display:inline-flex;align-items:center;gap:3px;box-shadow:0 1px 2px rgba(0,0,0,0.1)">
                     <canvas id="cvReaction" width="25" height="25" style="width:25px;height:25px;border-radius:2px;vertical-align:middle"></canvas>
                     <span style="color:#555">3</span>
                   </div>
@@ -411,7 +415,7 @@ footer{width:100%;max-width:800px;padding:16px;text-align:center;font-size:10px;
                 <!-- 吹き出し＋リアクション -->
                 <div style="position:relative;display:inline-block;margin-bottom:16px">
                   <div style="background:#2d2d2d;border-radius:4px 12px 12px 12px;padding:8px 12px;font-size:18px;color:#eee">お願い！</div>
-                  <div style="position:absolute;bottom:-25px;left:10px;background:#2d2d2d;border:1px solid #444;border-radius:10px;padding:1px 6px;font-size:11px;display:inline-flex;align-items:center;gap:3px">
+                  <div style="position:absolute;bottom:-25px;left:10px;background:#2d2d2d;border:1px solid #444;border-radius:999px;padding:2px 8px;font-size:11px;display:inline-flex;align-items:center;gap:3px">
                     <canvas id="cvReactionD" width="25" height="25" style="width:25px;height:25px;border-radius:2px;vertical-align:middle"></canvas>
                     <span style="color:#aaa">3</span>
                   </div>
@@ -434,6 +438,12 @@ footer{width:100%;max-width:800px;padding:16px;text-align:center;font-size:10px;
 </div><!-- /main -->
 
 <div class="ad-space" style="margin:8px auto">[ AD ]</div>
+<div style="width:100%;max-width:800px;margin:0 auto;padding:16px 20px;color:#888;font-size:11px;line-height:1.9;text-align:left;box-sizing:border-box;">
+  <p style="margin:0 0 8px;font-size:12px;color:#555;font-weight:bold;">スタンプメーカーとは？</p>
+  <p style="margin:0 0 10px;">Teams・Slack・Discord用の<strong style="color:#444;">カスタム絵文字</strong>・<strong style="color:#444;">カスタムスタンプ</strong>が無料で簡単に作れるジェネレーターです。テキストを入力するだけでオリジナルの<strong style="color:#444;">カスタム絵文字</strong>・<strong style="color:#444;">自作スタンプ</strong>をすぐ作成できます。</p>
+  <p style="margin:0 0 10px;">会社の<strong style="color:#444;">Teams絵文字</strong>・<strong style="color:#444;">Slackスタンプ</strong>・<strong style="color:#444;">Discord絵文字</strong>をまとめて作成可能。フォントやカラーを自由にカスタマイズして、職場やコミュニティにぴったりな<strong style="color:#444;">自作絵文字</strong>・<strong style="color:#444;">自作スタンプ</strong>が作れます。GIFアニメーション対応なので動くスタンプも作成できます。</p>
+  <p style="margin:0;">文字を入力してフォント・色・サイズを選ぶだけ。登録不要・完全無料で使えます。スマホ・PC両対応。作ったスタンプはPNGまたはGIFでダウンロードしてすぐ使えます。</p>
+</div>
 <footer>© 2026 Mutacco Works.</footer>
 
 <script>
@@ -482,6 +492,8 @@ var FONTS = [
   {id:'kaisei',   name:'シャレ文字',  family:'Kaisei Decol',        preview:'あいう', offsetY:0},
   {id:'wdxl',     name:'スリム',    family:'WDXL Lubrifont JP N',preview:'あいう', offsetY:0.04},
   {id:'pirata',   name:'中二病',    family:'Pirata One',          preview:'ABC',    offsetY:0.1},
+  {id:'zero',     name:'零ゴシック',  family:'ZeroGothic',          preview:'あいう', offsetY:0},
+  {id:'doki',     name:'ドキドキ',   family:'DokiDokiFantasia',    preview:'あいう', offsetY:0},
 ];
 
 // ===== アニメーション定義 =====
