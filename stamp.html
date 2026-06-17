@@ -336,6 +336,17 @@ footer{width:100%;max-width:800px;padding:16px;text-align:center;font-size:10px;
         </div>
       </div>
     </div>
+    <div class="panel">
+      <span class="sec-label">IMAGE SIZE</span>
+      <div class="slider-row">
+        <label>横幅 <span id="imgScaleXVal">100</span>%</label>
+        <input type="range" id="imgScaleX" min="10" max="200" value="100">
+      </div>
+      <div class="slider-row">
+        <label>縦幅 <span id="imgScaleYVal">100</span>%</label>
+        <input type="range" id="imgScaleY2" min="10" max="200" value="100">
+      </div>
+    </div>
   </div><!-- /imageMode -->
 
   <!-- アニメーション（共通） -->
@@ -498,24 +509,48 @@ var FONTS = [
 
 // ===== アニメーション定義 =====
 var ANIMS = [
-  {id:'none',    name:'なし',      icon:'⬜'},
-  {id:'bounce',  name:'バウンス',   icon:'⬆️'},
-  {id:'spin',    name:'回転',      icon:'🔄'},
-  {id:'pulse',   name:'点滅',      icon:'💫'},
-  {id:'shake',   name:'ぷるぷる',   icon:'📳'},
-  {id:'zoom',    name:'ズーム',    icon:'🔍'},
-  {id:'wave',    name:'揺れる',    icon:'〰️'},
-  {id:'rainbow', name:'虹色',      icon:'🌈'},
-  {id:'fade',    name:'フェード',   icon:'🌫️'},
-  {id:'slide',   name:'スライド',   icon:'➡️'},
-  {id:'swing',   name:'スイング',   icon:'🎵'},
-  {id:'pop',     name:'ポップ',    icon:'🎉'},
+  {id:'none',      name:'なし',        icon:'⬜'},
+  // ── 上下・ジャンプ系 ──
+  {id:'bounce',    name:'バウンス',     icon:'⬆️'},
+  {id:'poyon',     name:'ぽよん',      icon:'🫧'},
+  {id:'yattaa',    name:'やったあ',    icon:'🙌'},
+  {id:'fallin',    name:'落下',        icon:'⬇️'},
+  {id:'floatup',   name:'浮き上がる',   icon:'☁️'},
+  {id:'chokyu',    name:'直球',        icon:'⚾'},
+  {id:'zoom',      name:'ズーム',      icon:'🔍'},
+  // ── 揺れ・振動系 ──
+  {id:'wave',      name:'揺れる',      icon:'〰️'},
+  {id:'swing',     name:'スイング',     icon:'🎵'},
+  {id:'nami',      name:'なみなみ',     icon:'🌊'},
+  {id:'shake',     name:'ぷるぷる',     icon:'📳'},
+  {id:'jolt',      name:'ぶるっ',      icon:'⚡'},
+  {id:'heartbeat', name:'ドキドキ',     icon:'❤️'},
+  // ── 回転・変形系 ──
+  {id:'spin',      name:'回転',        icon:'🔄'},
+  {id:'circle',    name:'ぐるぐる',     icon:'🌀'},
+  {id:'drill',     name:'ドリル',      icon:'🔩'},
+  {id:'pop',       name:'ポップ',      icon:'🎉'},
+  // ── 移動系 ──
+  {id:'slide',     name:'スライド',     icon:'➡️'},
+  {id:'flowleft',  name:'流れる←',     icon:'◀️'},
+  // ── 表示・非表示系 ──
+  {id:'fade',      name:'フェード',     icon:'🌫️'},
+  {id:'pulse',     name:'点滅',        icon:'💫'},
+  {id:'typewriter',name:'タイプ打ち',   icon:'⌨️'},
+  // ── エフェクト系 ──
+  {id:'rainbow',   name:'虹色',        icon:'🌈'},
+  {id:'kiran',     name:'キラン',      icon:'✨'},
+  {id:'neon',      name:'ネオン',      icon:'💡'},
 ];
 
 var curFont = 'mplus';
-var curAnim = 'none';
+var curAnims = ['none'];
 var curMode = 'text';
 var uploadedImage = null;
+// デフォルト画像としてむたっこのアイコンを読み込む
+var defaultImg = new Image();
+defaultImg.onload = function(){ uploadedImage = defaultImg; renderPreview(); };
+defaultImg.src = 'images/mutacco_cat.gif';
 var animFrame = null;
 var animT = 0;
 
@@ -592,14 +627,29 @@ function buildAnimGrid(){
   var g = document.getElementById('animGrid');
   ANIMS.forEach(function(a){
     var el = document.createElement('div');
-    el.className = 'anim-card' + (a.id === curAnim ? ' on' : '');
+    el.className = 'anim-card' + (curAnims.indexOf(a.id) !== -1 ? ' on' : '');
     el.innerHTML = '<div class="ac-icon">' + a.icon + '</div><div class="ac-name">' + a.name + '</div>';
     el.onclick = function(){
-      curAnim = a.id;
-      document.querySelectorAll('.anim-card').forEach(function(x){x.classList.remove('on');});
-      el.classList.add('on');
+      if(a.id === 'none'){
+        curAnims = ['none'];
+        document.querySelectorAll('.anim-card').forEach(function(x){x.classList.remove('on');});
+        el.classList.add('on');
+      } else {
+        var noneCard = document.querySelector('.anim-card[data-id="none"]');
+        if(noneCard) noneCard.classList.remove('on');
+        curAnims = curAnims.filter(function(x){return x !== 'none';});
+        if(el.classList.contains('on')){
+          el.classList.remove('on');
+          curAnims = curAnims.filter(function(x){return x !== a.id;});
+          if(curAnims.length === 0){ curAnims = ['none']; if(noneCard) noneCard.classList.add('on'); }
+        } else {
+          el.classList.add('on');
+          if(curAnims.indexOf(a.id) === -1) curAnims.push(a.id);
+        }
+      }
       startAnim();
     };
+    el.setAttribute('data-id', a.id);
     g.appendChild(el);
   });
 }
@@ -617,28 +667,104 @@ window.switchMode = function(mode){
 
 
 // ===== アニメーション関数 =====
-function getAnimTransform(id, t){
+function getAnimTransform(id, t, size, textWidth){
+  size = size || 210;
+  textWidth = textWidth || size;
   var speed = (parseInt(document.getElementById('animSpeed') ? document.getElementById('animSpeed').value : 5)) / 5;
   var s = Math.sin(t * 0.08 * speed);
   var c = Math.cos(t * 0.08 * speed);
   switch(id){
-    case 'bounce':  return {ty: s * 12, tx:0, sc:1, rot:0, alpha:1};
-    case 'spin':    return {ty:0, tx:0, sc:1, rot: t * 4 * speed, alpha:1};
-    case 'pulse':   return {ty:0, tx:0, sc: 1 + s * 0.15, rot:0, alpha:1};
-    case 'shake':   return {ty:0, tx: s * 8, sc:1, rot: s * 5, alpha:1};
-    case 'zoom':    return {ty:0, tx:0, sc: 0.85 + Math.abs(s) * 0.3, rot:0, alpha:1};
-    case 'wave':    return {ty: s * 10, tx: c * 5, sc:1, rot: s * 8, alpha:1};
-    case 'fade':    return {ty:0, tx:0, sc:1, rot:0, alpha: 0.4 + Math.abs(s) * 0.6};
-    case 'slide':   return {ty:0, tx: (Math.sin(t * 0.05 * speed) * 20), sc:1, rot:0, alpha:1};
-    case 'swing':   return {ty:0, tx:0, sc:1, rot: Math.sin(t * 0.06) * 20, alpha:1};
-    case 'pop':     return {ty: Math.abs(s) * -8, tx:0, sc: 1 + Math.abs(s) * 0.2, rot:0, alpha:1};
-    default:        return {ty:0, tx:0, sc:1, rot:0, alpha:1};
+    case 'bounce':    return {ty: s * 12, tx:0, sc:1, rot:0, alpha:1};
+    case 'spin':      return {ty:0, tx:0, sc:1, rot: t * 4 * speed, alpha:1};
+    // 点滅：明確にON/OFF
+    case 'pulse':     return {ty:0, tx:0, sc:1, rot:0, alpha: Math.floor(t * speed / 8) % 2 === 0 ? 1 : 0};
+    // ぷるぷる：おびえるように不規則に震える
+    case 'shake':     return {ty: Math.sin(t*0.9*speed)*4+Math.sin(t*1.7*speed)*3, tx: Math.sin(t*0.8*speed)*7+Math.sin(t*1.3*speed)*4, sc:1, rot: Math.sin(t*1.1*speed)*5, alpha:1};
+    // ズーム：画面外まで大げさにびよーん
+    case 'zoom':      return {ty:0, tx:0, sc: 0.3 + Math.abs(Math.sin(t * 0.02 * speed)) * 5.0, rot:0, alpha:1};
+    case 'wave':      return {ty: s * 10, tx: c * 5, sc:1, rot: s * 8, alpha:1};
+    // フェード：消えている時間を長く
+    case 'fade':      var fp = (t * 0.008 * speed) % 1; return {ty:0, tx:0, sc:1, rot:0, alpha: fp < 0.3 ? fp/0.3 : fp < 0.5 ? 1 : fp < 0.7 ? 1-(fp-0.5)/0.2 : 0};
+    case 'slide':     return {ty:0, tx: Math.sin(t * 0.05 * speed) * 20, sc:1, rot:0, alpha:1};
+    case 'swing':     return {ty:0, tx:0, sc:1, rot: Math.sin(t * 0.06 * speed) * 20, alpha:1};
+    case 'pop':       return {ty: Math.abs(s) * -8, tx:0, sc: 1 + Math.abs(s) * 0.2, rot:0, alpha:1};
+    // 流れる←：txで直接動かしてループはdrawStamp側で2回描画
+    case 'flowleft':  var loopW = Math.max(size, textWidth) + 20; var flOffset = (t * speed * 1.5) % loopW; return {ty:0, tx: -flOffset, sc:1, rot:0, alpha:1, flowleftExtra: loopW - flOffset};
+    // 落下：バウンドあり
+    case 'fallin':    var fy = ((t * speed * 1.5) % 280) - 140; return {ty: fy > 90 ? 90-(fy-90)*0.5 : fy, tx:0, sc:1, rot:0, alpha: fy < -120 ? 0 : 1};
+    // 浮き上がる
+    case 'floatup':   return {ty: 120 - ((t * speed) % 280), tx:0, sc:1, rot:0, alpha:1};
+    // ぐるぐる：円を描く
+    case 'circle':    return {ty: Math.sin(t * 0.06 * speed) * 30, tx: Math.cos(t * 0.06 * speed) * 30, sc:1, rot:0, alpha:1};
+    // ドキドキ：2回ドクンドクン
+    case 'heartbeat': var hb = (t * speed) % 60; return {ty:0, tx:0, sc: hb<8?1+hb*0.04:hb<16?1.32-(hb-8)*0.04:hb<24?1+(hb-16)*0.03:hb<32?1.24-(hb-24)*0.03:1, rot:0, alpha:1};
+    // ぶるっ：急に震えてリセット
+    case 'jolt':      var jt = (t * speed) % 50; var on = jt < 10; return {ty: on?Math.sin(jt*2)*14:0, tx: on?Math.cos(jt*2.5)*14:0, sc: on?1.2:1, rot: on?Math.sin(jt*3)*12:0, alpha:1};
+    // タイプ打ち：全文字表示したらリセット
+    case 'typewriter': var twCycle = Math.floor(t * speed / 8) % 10; return {ty:0, tx:0, sc:1, rot:0, alpha:1, typeChars: twCycle < 9 ? twCycle + 1 : 9999};
+    // なみなみ：縦に波打つ（文字ごとに位相をずらして描画側で処理）
+    case 'nami':      return {ty:0, tx:0, sc:1, rot:0, alpha:1, nami: t};
+    // キラン：左下→右上に光が走る
+    case 'kiran':     return {ty:0, tx:0, sc:1, rot:0, alpha:1, kiran: t};
+    // 集中線：中心から線が放射
+    // やったあ：左右にぴょんぴょん
+    case 'yattaa':    var yp = (t * speed * 0.5) % 60; var yside = yp < 15 ? -1 : yp < 30 ? 1 : yp < 45 ? -1 : 1; var yjump = Math.abs(Math.sin(yp * Math.PI / 15)) * -25; return {ty: yjump, tx: yside * 18, sc:1, rot: yside * 10, alpha:1};
+    // ぽよん：跳ねてもっちり着地
+    case 'poyon': {
+      var pp = (t * speed * 0.5) % 100;
+      var pty3, psx3, psy3;
+      if(pp < 50){
+        pty3 = -Math.sin(pp/50*Math.PI) * size * 0.75;
+        psx3 = 1; psy3 = 1;
+      } else if(pp < 62){
+        pty3 = 0;
+        var pt1 = (pp-50)/12;
+        psx3 = 1 + pt1*0.6; psy3 = 1 - pt1*0.6;
+      } else if(pp < 78){
+        pty3 = 0;
+        var pt2 = (pp-62)/16;
+        psx3 = 1.6 - pt2*0.6; psy3 = 0.4 + pt2*0.6;
+      } else {
+        pty3 = 0; psx3 = 1; psy3 = 1;
+      }
+      return {ty: pty3, tx:0, sc:1, rot:0, alpha:1, poyon:{x:psx3,y:psy3}};
+    }
+    // 直球：奥から迫ってくる
+    case 'chokyu':    var cp = (t * speed * 0.8) % 70; var csc2 = cp < 50 ? 0.05 + cp*0.029 : 1.5; return {ty:0, tx:0, sc: Math.min(1.5, csc2), rot:0, alpha: cp < 5 ? cp/5 : 1};
+    // ネオン：本体はそのまま、描画側でグロウ処理
+    case 'neon':      return {ty:0, tx:0, sc:1, rot:0, alpha:1, neon: t};
+    // ドリル：回転しながら縮んで→戻ってくる
+    case 'drill': {
+      var dp = (t * speed * 0.6) % 90;
+      var drot, dsc;
+      if(dp < 30){
+        // 回転しながら縮む
+        drot = dp * 12;
+        dsc = 1 - dp/30 * 0.85;
+      } else if(dp < 35){
+        // 最小で一瞬止まる
+        drot = 360;
+        dsc = 0.15;
+      } else if(dp < 65){
+        // 回転しながら戻ってくる
+        var dt = (dp-35)/30;
+        drot = 360 + dt * 360;
+        dsc = 0.15 + dt * 0.85;
+      } else {
+        // 戻り切ったら少し間を持たせる
+        drot = 720;
+        dsc = 1;
+      }
+      return {ty:0, tx:0, sc: dsc, rot: drot, alpha: dsc < 0.2 ? dsc*5 : 1};
+    }
+    default:          return {ty:0, tx:0, sc:1, rot:0, alpha:1};
   }
 }
 
 function getAnimColor(id, t, baseColor){
   if(id !== 'rainbow') return baseColor;
-  var hue = (t * 3) % 360;
+  var speed = (parseInt(document.getElementById('animSpeed') ? document.getElementById('animSpeed').value : 5)) / 5;
+  var hue = (t * 3 * speed) % 360;
   return 'hsl(' + hue + ',100%,65%)';
 }
 
@@ -656,21 +782,116 @@ function drawStamp(cv, size, t){
     ctx.fillRect(0, 0, size, size);
   }
 
-  var anim = getAnimTransform(curAnim, t);
+  // 複数アニメーションを合成
+  var anim = {ty:0, tx:0, sc:1, rot:0, alpha:1};
+  var activeAnims = (typeof curAnims !== 'undefined') ? curAnims : ['none'];
+  activeAnims.forEach(function(animId){
+    if(animId === 'none') return;
+    // テキスト幅を計測してflowleft用に渡す
+    var textWidthForFlow = 0;
+    try {
+      var tmpCv = document.createElement('canvas');
+      var tmpCtx = tmpCv.getContext('2d');
+      var rawTxt = document.getElementById('textInput').value || 'OK';
+      var fsr = parseInt(document.getElementById('fontSize').value)/100;
+      var fntObj = FONTS.find(function(f){return f.id===curFont;})||FONTS[0];
+      var fsz = size * 0.95;
+      tmpCtx.font = '900 '+fsz+'px \''+fntObj.family+'\',sans-serif';
+      rawTxt.split(/\r?\n/).forEach(function(l){
+        textWidthForFlow = Math.max(textWidthForFlow, tmpCtx.measureText(l).width * fsr);
+      });
+    } catch(e){}
+    var a = getAnimTransform(animId, t, size, textWidthForFlow);
+    anim.ty += a.ty; anim.tx += a.tx;
+    anim.sc *= a.sc; anim.rot += a.rot;
+    anim.alpha = Math.min(anim.alpha, a.alpha);
+    if(a.typeChars !== undefined) anim.typeChars = a.typeChars;
+    if(a.nami !== undefined) anim.nami = a.nami;
+    if(a.flowleftExtra !== undefined) anim.flowleftExtra = a.flowleftExtra;
+    if(a.kiran !== undefined) anim.kiran = a.kiran;
+    if(a.neon !== undefined) anim.neon = a.neon;
+    if(a.poyon !== undefined) anim.poyon = a.poyon;
+  });
 
   ctx.save();
   ctx.globalAlpha = anim.alpha;
   ctx.translate(size/2 + anim.tx, size/2 + anim.ty);
   ctx.rotate(anim.rot * Math.PI / 180);
-  ctx.scale(anim.sc, anim.sc);
+  // ぽよん：x/y個別スケール
+  if(anim.poyon){
+    ctx.scale(anim.sc * anim.poyon.x, anim.sc * anim.poyon.y);
+  } else {
+    ctx.scale(anim.sc, anim.sc);
+  }
 
   if(curMode === 'text'){
     drawText(ctx, size, t, anim);
   } else if(uploadedImage){
     drawImage(ctx, size, t);
   }
-
   ctx.restore();
+
+  // キラン：左下→右上、文字マスクに光を乗せる
+  if(anim.kiran !== undefined){
+    var sp2 = (parseInt(document.getElementById('animSpeed').value)||5)/5;
+    var kp = ((anim.kiran * sp2 * 3.5) % (size*3)) - size;
+    // 文字シルエットをオフセット用canvasに描画
+    var kMask = document.createElement('canvas'); kMask.width=size; kMask.height=size;
+    var kmc = kMask.getContext('2d');
+    kmc.drawImage(cv, 0, 0);
+    // 光グラデ（左下→右上の対角）
+    var kgo = document.createElement('canvas'); kgo.width=size; kgo.height=size;
+    var kgc = kgo.getContext('2d');
+    var kg = kgc.createLinearGradient(kp-size*0.5, size-kp, kp+size*0.5, -kp);
+    kg.addColorStop(0,'rgba(255,255,255,0)');
+    kg.addColorStop(0.35,'rgba(255,255,255,0)');
+    kg.addColorStop(0.5,'rgba(255,255,255,0.9)');
+    kg.addColorStop(0.65,'rgba(255,255,255,0)');
+    kg.addColorStop(1,'rgba(255,255,255,0)');
+    kgc.fillStyle = kg;
+    kgc.fillRect(0, 0, size, size);
+    kgc.globalCompositeOperation = 'destination-in';
+    kgc.drawImage(kMask, 0, 0);
+    ctx.drawImage(kgo, 0, 0);
+  }
+
+
+  // ネオン：文字の外側だけ虹色に光る
+  if(anim.neon !== undefined){
+    var sp4 = (parseInt(document.getElementById('animSpeed').value)||5)/5;
+    var hue = (anim.neon * sp4 * 3) % 360;
+    // 文字シルエットを取得
+    var nMask = document.createElement('canvas'); nMask.width=size; nMask.height=size;
+    var nmc = nMask.getContext('2d');
+    nmc.drawImage(cv, 0, 0);
+    // 外側グロウcanvas
+    var nGlow = document.createElement('canvas'); nGlow.width=size; nGlow.height=size;
+    var ngc = nGlow.getContext('2d');
+    for(var gi=3; gi>=1; gi--){
+      ngc.save();
+      ngc.shadowColor = 'hsl('+((hue+gi*30)%360)+',100%,60%)';
+      ngc.shadowBlur = gi * 8;
+      ngc.globalAlpha = 0.6;
+      ngc.drawImage(nMask, 0, 0);
+      ngc.restore();
+    }
+    // 元画像で内側を消して外側だけ残す
+    ngc.globalCompositeOperation = 'destination-out';
+    ngc.drawImage(nMask, 0, 0);
+    ctx.drawImage(nGlow, 0, 0);
+  }
+
+  // 流れる←：2枚目をループ用に描画
+  if(anim.flowleftExtra !== undefined){
+    ctx.save();
+    ctx.globalAlpha = anim.alpha;
+    ctx.translate(size/2 + anim.flowleftExtra, size/2 + anim.ty);
+    ctx.rotate(anim.rot * Math.PI / 180);
+    ctx.scale(anim.sc, anim.sc);
+    if(curMode === 'text') drawText(ctx, size, t, anim);
+    else if(uploadedImage) drawImage(ctx, size, t);
+    ctx.restore();
+  }
 }
 
 function drawText(ctx, size, t, anim){
@@ -708,35 +929,45 @@ function drawText(ctx, size, t, anim){
   var lineH = fs * 0.95 + lineGap;
   var totalH = lineH * lines.length;
   var baseY = (posY - 0.5) * size - totalH/2 + lineH/2 + fs * fontOffsetY;
-  var textColor = getAnimColor(curAnim, t, document.getElementById('textColor').value);
+  var textColor = getAnimColor(curAnims[0] || 'none', t, document.getElementById('textColor').value);
   var sw = parseInt(document.getElementById('strokeWidth').value);
   var sw2 = 0;
 
+  var namiT = anim && anim.nami !== undefined ? anim.nami : null;
+  var typeChars = anim && anim.typeChars !== undefined ? anim.typeChars : 9999;
+  var speed2 = (parseInt(document.getElementById('animSpeed') ? document.getElementById('animSpeed').value : 5)) / 5;
+
+  // 流れる←：全体をオフセットしてループ描画
+  // 流れる←はanim.txで制御
+
+  drawLines(ctx, lines, baseY, lineH, ls, sw, textColor, namiT, typeChars, size, speed2);
+}
+
+function drawLines(ctx, lines, baseY, lineH, ls, sw, textColor, namiT, typeChars, size, speed2){
+  speed2 = speed2 || 1;
+  var charCount = 0;
   lines.forEach(function(line, idx){
     var ty = baseY + idx * lineH;
-    // 1文字ずつ描画して中央揃えをキープ
     var chars = line.split('');
     var totalW = 0;
     chars.forEach(function(ch){ totalW += ctx.measureText(ch).width; });
     totalW += ls * (chars.length - 1);
     var startX = -totalW / 2;
-    chars.forEach(function(ch){
+    chars.forEach(function(ch, ci){
+      charCount++;
       var cw = ctx.measureText(ch).width;
       var cx2 = startX + cw / 2;
-      if(sw2 > 0){
-        ctx.lineWidth = sw + sw2 * 2;
-        ctx.strokeStyle = '#ffffff';
-        ctx.lineJoin = 'round';
-        ctx.strokeText(ch, cx2, ty);
-      }
+      if(charCount > typeChars){ startX += cw + ls; return; }
+      var namiY = namiT !== null ? Math.sin(namiT * 0.08 * speed2 + ci * 0.8) * 12 : 0;
+      var cyy = ty + namiY;
       if(sw > 0){
         ctx.lineWidth = sw * 2;
         ctx.strokeStyle = document.getElementById('strokeColor').value;
         ctx.lineJoin = 'round';
-        ctx.strokeText(ch, cx2, ty);
+        ctx.strokeText(ch, cx2, cyy);
       }
       ctx.fillStyle = textColor;
-      ctx.fillText(ch, cx2, ty);
+      ctx.fillText(ch, cx2, cyy);
       startX += cw + ls;
     });
   });
@@ -748,7 +979,11 @@ function drawImage(ctx, size, t){
   var ih = uploadedImage.naturalHeight || uploadedImage.height;
   var scale = Math.min(size / iw, size / ih) * 0.9;
   var dw = iw * scale, dh = ih * scale;
-  ctx.drawImage(uploadedImage, -dw/2, -dh/2, dw, dh);
+  var sxEl = document.getElementById('imgScaleX');
+  var syEl = document.getElementById('imgScaleY2');
+  var sx = sxEl ? parseInt(sxEl.value)/100 : 1;
+  var sy = syEl ? parseInt(syEl.value)/100 : 1;
+  ctx.drawImage(uploadedImage, -dw*sx/2, -dh*sy/2, dw*sx, dh*sy);
 }
 
 // ===== 背景透過処理 =====
@@ -795,12 +1030,12 @@ function renderPreview(){
 // ===== アニメーションループ =====
 function startAnim(){
   if(animFrame) cancelAnimationFrame(animFrame);
-  if(curAnim === 'none'){
-    animT = 0;
-    renderPreview();
-    return;
-  }
   function loop(){
+    if(curAnims.length === 1 && curAnims[0] === 'none'){
+      renderPreview();
+      animFrame = requestAnimationFrame(loop);
+      return;
+    }
     animT++;
     renderPreview();
     animFrame = requestAnimationFrame(loop);
@@ -814,7 +1049,7 @@ window.download = function(platform){
 };
 function doDownload(platform){
   var size = platform === 'teams' ? 210 : 128;
-  if(curAnim === 'none'){
+  if(curAnims.length === 1 && curAnims[0] === 'none'){
     var offCv = document.createElement('canvas');
     offCv.width = size; offCv.height = size;
     drawStamp(offCv, size, 0);
@@ -861,10 +1096,8 @@ function makeGif(platform, size){
 // GENERATEボタン削除 - 自動レンダリング
 
 // テキスト/カラー変更でリアルタイム更新
-['textInput','textColor','strokeColor','bgColor'].forEach(function(id){
-  document.getElementById(id).addEventListener('input', renderPreview);
-});
-['strokeWidth','fontSize','fontScaleY','letterSpacing','lineGap','animSpeed'].forEach(function(id){
+document.getElementById('textInput').addEventListener('input', renderPreview);
+['strokeWidth','fontSize','fontScaleY','letterSpacing','lineGap','animSpeed','imgScaleX','imgScaleY2'].forEach(function(id){
   var el = document.getElementById(id);
   if(!el) return;
   var valEl = document.getElementById(id + 'Val');
