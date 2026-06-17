@@ -152,8 +152,9 @@ footer{width:100%;max-width:800px;padding:16px;text-align:center;font-size:10px;
 @media(max-width:640px){.right-col{grid-template-columns:1fr}}
 @media(max-width:640px){.chat-preview-inner{flex-direction:row!important}}
 @media(max-width:640px){.chat-preview-inner>div{flex:1;min-width:0}}
-@media(max-width:640px){.preview-inner{flex-direction:row!important;align-items:stretch}}
-@media(max-width:640px){.preview-inner canvas{width:auto!important;height:100%!important;flex-shrink:0}}
+@media(max-width:640px){.preview-inner{flex-direction:row!important;align-items:flex-start}}
+@media(max-width:640px){.preview-inner canvas{flex-shrink:0!important}}
+@media(max-width:640px){.dl-buttons{grid-template-columns:1fr!important;flex-direction:column}}
 @media(max-width:640px){.dl-buttons{grid-template-columns:1fr!important;flex:1}}
 @media(max-width:640px) and (orientation:landscape){.right-col{grid-template-columns:1fr 1fr}}
 @media(max-width:640px){
@@ -373,9 +374,9 @@ footer{width:100%;max-width:800px;padding:16px;text-align:center;font-size:10px;
       <div class="preview-row">
       <div class="preview-area" style="padding:12px">
         <span class="preview-label">PREVIEW</span>
-        <div class="preview-inner" style="display:flex;flex-direction:row;gap:8px;margin-top:8px;align-items:stretch">
+        <div class="preview-inner" style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
           <canvas class="preview-canvas" id="cvPreview" width="210" height="210" style="width:150px!important;height:150px!important;display:block;flex-shrink:0;max-width:150px"></canvas>
-          <div class="dl-buttons" style="display:flex;flex-direction:column;gap:6px;flex:1">
+          <div class="dl-buttons" style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
             <button class="dl-btn teams" onclick="download('teams')" style="width:100%">
               <span class="dl-icon">🟦</span>
               <span class="dl-label">Download / Teams</span>
