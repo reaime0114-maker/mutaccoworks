@@ -150,7 +150,7 @@ footer a{color:#888;text-decoration:none;}
   <!-- 多め払い -->
   <div class="panel">
     <div class="panel-title">多めに払う人の設定（任意・最大3人）</div>
-    <div style="font-size:11px;color:var(--text2);">均等割りの金額に、追加で払う金額を入力してください。</div>
+    <div style="font-size:11px;color:var(--text2);">払う金額が決まっている人を入力。残りを残りの人数で均等割りします。</div>
     <div class="extra-list" id="extraList"></div>
     <button class="add-btn" id="addExtraBtn">＋ 多めに払う人を追加</button>
   </div>
@@ -210,8 +210,8 @@ function renderExtras(){
     div.innerHTML =
       '<span class="extra-label">' + (i+1) + '人目</span>' +
       '<input class="extra-name" type="text" placeholder="名前（任意）" value="' + escHtml(ex.name) + '">' +
-      '<span class="extra-label">は均等割り＋</span>' +
-      '<input class="extra-amount" type="number" placeholder="0" min="0" inputmode="numeric" value="' + (ex.amount||'') + '">' +
+      '<span class="extra-label">が払う金額</span>' +
+      '<input class="extra-amount" type="number" placeholder="10000" min="0" inputmode="numeric" value="' + (ex.amount||'') + '">' +
       '<span class="extra-label">円</span>' +
       '<button class="remove-btn" title="削除">×</button>';
 
@@ -232,7 +232,6 @@ function renderExtras(){
     list.appendChild(div);
   });
 
-  // 3人になったら追加ボタンを隠す
   document.getElementById('addExtraBtn').style.display = extras.length >= 3 ? 'none' : '';
 }
 
@@ -245,43 +244,49 @@ function calculate(){
   var panel = document.getElementById('resultPanel');
   if(isNaN(total) || total <= 0){ panel.classList.remove('show'); return; }
 
-  // 多め払いの合計追加額
-  var extraTotal = 0;
-  extras.forEach(function(ex){ extraTotal += (ex.amount || 0); });
+  // 個別払いの合計
+  var fixedTotal = 0;
+  extras.forEach(function(ex){ fixedTotal += (ex.amount || 0); });
 
-  // 均等割り分 = (合計 - 追加額の合計) ÷ 全員（四捨五入）
-  var base = total - extraTotal;
-  if(base < 0) base = 0;
-  var perPerson = Math.round(base / count);
+  // 残りを均等割り
+  var normalCount = count - extras.length;
+  var remaining = total - fixedTotal;
+  var perPerson = normalCount > 0 ? Math.round(remaining / normalCount) : 0;
 
-  // 各自の支払い
   var details = '';
   var checkTotal = 0;
-
-  // 多め払いの人
   var extraNames = [];
-  extras.forEach(function(ex){
-    var pay = perPerson + (ex.amount || 0);
-    var label = ex.name ? ex.name : '多め払いの人' + (extras.indexOf(ex)+1);
+
+  // 個別払いの人
+  extras.forEach(function(ex, i){
+    var pay = ex.amount || 0;
+    var label = ex.name ? ex.name : '多め払いの人' + (i+1);
     details += '<div class="detail-row"><span class="detail-label">' + escHtml(label) + '</span><span class="detail-value">' + pay.toLocaleString() + ' 円</span></div>';
     checkTotal += pay;
     extraNames.push({label: label, pay: pay});
   });
 
-  // 残り全員（均等）
-  var normalCount = count - extras.length;
+  // 均等割りの人
   if(normalCount > 0){
-    details += '<div class="detail-row"><span class="detail-label">その他 ' + normalCount + ' 人</span><span class="detail-value">' + perPerson.toLocaleString() + ' 円 × ' + normalCount + '</span></div>';
+    var normalLabel = extras.length > 0 ? 'その他 ' + normalCount + ' 人' : normalCount + ' 人';
+    details += '<div class="detail-row"><span class="detail-label">' + normalLabel + '</span><span class="detail-value">' + (perPerson >= 0 ? perPerson.toLocaleString() : '—') + ' 円' + (normalCount > 1 ? ' × ' + normalCount : '') + '</span></div>';
     checkTotal += perPerson * normalCount;
   }
 
   details += '<div class="detail-row detail-sep"><span class="detail-label">合計確認</span><span class="detail-value">' + checkTotal.toLocaleString() + ' 円</span></div>';
 
-  document.getElementById('resultValue').textContent = perPerson.toLocaleString();
+  // 残りがマイナスのときは警告
+  if(remaining < 0){
+    details = '<div class="detail-row"><span class="detail-label" style="color:#ffddaa">⚠️ 個別払いの合計が合計金額を超えています</span></div>';
+    document.getElementById('resultValue').textContent = '—';
+  } else {
+    document.getElementById('resultValue').textContent = normalCount > 0 ? perPerson.toLocaleString() : '—';
+  }
+
   document.getElementById('resultDetails').innerHTML = details;
   panel.classList.add('show');
 
-  panel._copyData = {total:total, count:count, perPerson:perPerson, extras:extraNames, normalCount:normalCount, checkTotal:checkTotal};
+  panel._copyData = {total:total, count:count, perPerson:perPerson, extras:extraNames, normalCount:normalCount, checkTotal:checkTotal, remaining:remaining};
 }
 
 // コピー
