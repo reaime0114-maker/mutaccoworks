@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>赤ちゃんの名前候補を提案 | AIが名付けをサポート | むたっこ製作所</title>
+<meta name="description" content="赤ちゃんの名前をAIが提案。性別・字数・雰囲気・ジャンル（宝石・季節・古風など）・姓との画数相性・願いを入力するだけ。命名・名付けを無料でサポート。登録不要・スマホ対応。むたっこ製作所。">
+<link rel="icon" href="images/icon.png">
+<link rel="canonical" href="https://mutaccoworks.github.io/namegen.html">
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+1p:wght@400;700;900&family=Noto+Serif+JP:wght@400;700&family=Zen+Kaku+Gothic+New:wght@400;700&display=swap" rel="stylesheet">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8754050840177143" crossorigin="anonymous"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#fdf8ff;
+  --surface:#ffffff;
+  --surface2:#f8f0ff;
+  --accent:#7c4dbe;
+  --accent2:#b39ddb;
+  --gold:#f9a825;
+  --pink:#f48fb1;
+  --text:#1a0a2e;
+  --text2:#6a4a8a;
+  --border:#e0d0f0;
+  --r:14px;
+}
+body{background:var(--bg);color:var(--text);font-family:'Zen Kaku Gothic New',sans-serif;min-height:100vh;}
+
+/* バナー */
+.top-banner{width:100%;background:#fff;border-bottom:2px solid #d0e8ec;padding:0;text-decoration:none;display:block;}
+.top-banner-inner{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;}
+.top-banner-left{display:flex;align-items:center;gap:10px;}
+.top-banner-icon{width:36px;height:36px;border-radius:10px;overflow:hidden;flex-shrink:0;background:#fff;border:1px solid #e0e0e0;}
+.top-banner-icon img{width:100%;height:100%;object-fit:cover;display:block;}
+.top-banner-text{display:flex;flex-direction:column;gap:1px;}
+.top-banner-ja{font-size:14px;font-weight:bold;color:#111;letter-spacing:0.5px;}
+.top-banner-en{font-size:9px;color:#0191a2;letter-spacing:0.5px;white-space:nowrap;}
+.top-banner-btn{background:linear-gradient(90deg,#005f6b,#0191a2,#00d4e8,#0191a2,#005f6b);background-size:300%;color:#fff;font-size:12px;font-weight:bold;padding:8px 14px;border-radius:20px;letter-spacing:1px;white-space:nowrap;box-shadow:0 2px 12px rgba(1,145,162,0.4);animation:gbg 2s linear infinite;}
+@keyframes gbg{0%{background-position:0%}100%{background-position:300%}}
+
+.page-header{text-align:center;padding:28px 16px 8px;}
+.page-header h1{font-family:'Noto Serif JP',serif;font-size:24px;font-weight:700;letter-spacing:4px;color:var(--accent);}
+.page-header p{font-size:12px;color:var(--text2);margin-top:6px;letter-spacing:1px;}
+
+.main{max-width:640px;margin:0 auto;padding:0 16px 40px;display:flex;flex-direction:column;gap:14px;}
+
+/* パネル */
+.panel{background:var(--surface);border-radius:var(--r);border:1.5px solid var(--border);padding:16px;display:flex;flex-direction:column;gap:10px;}
+.panel-title{font-size:10px;font-weight:700;letter-spacing:4px;color:var(--accent);border-bottom:1px solid var(--border);padding-bottom:8px;}
+
+/* 性別ボタン */
+.gender-btns{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+.gender-btn{border:1.5px solid var(--border);border-radius:10px;padding:10px;cursor:pointer;text-align:center;transition:all 0.15s;background:#fff;}
+.gender-btn.on{border-color:var(--accent);background:rgba(124,77,190,0.08);}
+.gender-btn .g-icon{font-size:20px;display:block;margin-bottom:4px;}
+.gender-btn .g-name{font-size:12px;color:var(--text2);letter-spacing:1px;}
+.gender-btn.on .g-name{color:var(--accent);font-weight:700;}
+
+/* チップ選択 */
+.chip-group{display:flex;flex-wrap:wrap;gap:6px;}
+.chip{border:1.5px solid var(--border);border-radius:20px;padding:5px 12px;font-size:12px;cursor:pointer;background:#fff;transition:all 0.15s;letter-spacing:0.5px;}
+.chip.on{background:var(--accent);color:#fff;border-color:var(--accent);}
+.chip:hover:not(.on){border-color:var(--accent);color:var(--accent);}
+
+/* ジャンルカード */
+.genre-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:6px;}
+.genre-card{border:1.5px solid var(--border);border-radius:10px;padding:8px 6px;cursor:pointer;text-align:center;transition:all 0.15s;background:#fff;}
+.genre-card.on{border-color:var(--accent);background:rgba(124,77,190,0.08);}
+.genre-card .g-emoji{font-size:18px;display:block;margin-bottom:3px;}
+.genre-card .g-label{font-size:10px;color:var(--text2);letter-spacing:0.5px;}
+.genre-card.on .g-label{color:var(--accent);font-weight:700;}
+
+/* 入力 */
+.text-input{border:1.5px solid var(--border);border-radius:10px;padding:10px 14px;font-size:15px;font-family:'Zen Kaku Gothic New',sans-serif;outline:none;background:var(--surface2);transition:border-color 0.15s;width:100%;}
+.text-input:focus{border-color:var(--accent);}
+textarea.text-input{resize:vertical;min-height:70px;line-height:1.7;}
+
+/* 生成ボタン */
+.gen-btn{background:linear-gradient(135deg,var(--accent),#b39ddb);color:#fff;font-family:'Noto Serif JP',serif;font-size:16px;font-weight:700;letter-spacing:3px;border:none;border-radius:var(--r);padding:16px;cursor:pointer;box-shadow:0 4px 16px rgba(124,77,190,0.4);transition:transform 0.1s;}
+.gen-btn:hover{transform:translateY(-1px);}
+.gen-btn:active{transform:scale(0.98);}
+.gen-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
+
+/* ローディング */
+.loading{text-align:center;padding:20px;color:var(--text2);font-size:13px;letter-spacing:2px;display:none;}
+.loading.show{display:block;}
+.dot-flashing{display:inline-flex;gap:6px;margin-left:8px;}
+.dot-flashing span{width:6px;height:6px;border-radius:50%;background:var(--accent2);animation:dotfl 1s infinite;}
+.dot-flashing span:nth-child(2){animation-delay:0.2s;}
+.dot-flashing span:nth-child(3){animation-delay:0.4s;}
+@keyframes dotfl{0%,80%,100%{opacity:0.2}40%{opacity:1}}
+
+/* 結果 */
+.result-area{display:flex;flex-direction:column;gap:10px;}
+.name-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r);overflow:hidden;transition:box-shadow 0.2s;}
+.name-card:hover{box-shadow:0 4px 16px rgba(124,77,190,0.15);}
+.name-card-head{padding:14px 16px 8px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;}
+.name-kanji{font-family:'Noto Serif JP',serif;font-size:26px;font-weight:700;color:var(--text);}
+.name-yomi{font-size:13px;color:var(--text2);}
+.name-strokes{font-size:11px;color:var(--accent);background:rgba(124,77,190,0.1);border-radius:20px;padding:2px 8px;}
+.name-meaning{padding:0 16px 8px;font-size:13px;color:var(--text2);line-height:1.8;}
+.name-tags{padding:0 16px 12px;display:flex;flex-wrap:wrap;gap:4px;}
+.name-tag{font-size:10px;color:var(--accent2);background:rgba(179,157,219,0.15);border-radius:10px;padding:2px 8px;border:1px solid rgba(124,77,190,0.2);}
+.name-links{padding:8px 16px 12px;display:flex;gap:6px;border-top:1px solid var(--border);}
+.name-link{display:inline-flex;align-items:center;gap:3px;padding:4px 10px;border-radius:20px;font-size:11px;text-decoration:none;border:1px solid var(--border);color:var(--text2);transition:all 0.15s;}
+.name-link:hover{border-color:var(--accent);color:var(--accent);}
+
+.error-msg{background:#fff0f0;border:1.5px solid #ffcccc;border-radius:10px;padding:12px;font-size:12px;color:#cc0000;display:none;}
+.error-msg.show{display:block;}
+
+.ad-space{width:100%;height:60px;background:var(--surface2);border:1px dashed var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--accent2);font-size:10px;letter-spacing:2px;}
+
+footer{text-align:center;padding:16px;font-size:10px;color:#aaa;letter-spacing:2px;}
+footer a{color:#aaa;text-decoration:none;}
+</style>
+</head>
+<body>
+
+<a class="top-banner" href="index.html">
+  <div class="top-banner-inner">
+    <div class="top-banner-left">
+      <div class="top-banner-icon"><img src="images/icon.png" alt="むたっこ製作所"></div>
+      <div class="top-banner-text">
+        <div class="top-banner-ja">むたっこ製作所</div>
+        <div class="top-banner-en">Mutacco Works — 無料ツール集</div>
+      </div>
+    </div>
+    <div class="top-banner-btn">ほかのツールも見ていってね 🐈‍⬛</div>
+  </div>
+</a>
+
+<div class="page-header">
+  <h1>🐣 赤ちゃんの名前</h1>
+  <p>AIが候補を提案します ― 命名・名付けサポート</p>
+</div>
+
+<div class="main">
+
+  <div class="ad-space">[ AD ]</div>
+
+  <!-- 性別 -->
+  <div class="panel">
+    <div class="panel-title">性別</div>
+    <div class="gender-btns">
+      <div class="gender-btn on" data-val="男の子" onclick="selectGender(this)">
+        <span class="g-icon">👦🏻</span><span class="g-name">男の子</span>
+      </div>
+      <div class="gender-btn" data-val="女の子" onclick="selectGender(this)">
+        <span class="g-icon">👧🏻</span><span class="g-name">女の子</span>
+      </div>
+      <div class="gender-btn" data-val="どちらでも" onclick="selectGender(this)">
+        <span class="g-icon">👶🏻</span><span class="g-name">どちらでも</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 字数 -->
+  <div class="panel">
+    <div class="panel-title">字数</div>
+    <div class="chip-group" id="mojiGroup">
+      <div class="chip on" data-val="こだわらない">こだわらない</div>
+      <div class="chip" data-val="1文字">1文字</div>
+      <div class="chip" data-val="2文字">2文字</div>
+      <div class="chip" data-val="3文字">3文字</div>
+    </div>
+  </div>
+
+  <!-- 雰囲気 -->
+  <div class="panel">
+    <div class="panel-title">雰囲気（複数選択可）</div>
+    <div class="chip-group" id="vibeGroup">
+      <div class="chip" data-val="かっこいい">かっこいい</div>
+      <div class="chip" data-val="かわいい">かわいい</div>
+      <div class="chip" data-val="やわらかい">やわらかい</div>
+      <div class="chip" data-val="凛々しい">凛々しい</div>
+      <div class="chip" data-val="おおらか">おおらか</div>
+      <div class="chip" data-val="知的な">知的な</div>
+      <div class="chip" data-val="明るい">明るい</div>
+      <div class="chip" data-val="落ち着いた">落ち着いた</div>
+    </div>
+  </div>
+
+  <!-- ジャンル -->
+  <div class="panel">
+    <div class="panel-title">名前のジャンル（複数選択可）</div>
+    <div class="genre-grid" id="genreGroup">
+      <div class="genre-card" data-val="宝石・鉱石">
+        <span class="g-emoji">💎</span><span class="g-label">宝石・鉱石</span>
+      </div>
+      <div class="genre-card" data-val="春・桜・花">
+        <span class="g-emoji">🌸</span><span class="g-label">春・桜・花</span>
+      </div>
+      <div class="genre-card" data-val="夏・空・海">
+        <span class="g-emoji">🌊</span><span class="g-label">夏・空・海</span>
+      </div>
+      <div class="genre-card" data-val="秋・紅葉">
+        <span class="g-emoji">🍁</span><span class="g-label">秋・紅葉</span>
+      </div>
+      <div class="genre-card" data-val="冬・雪・凛">
+        <span class="g-emoji">❄️</span><span class="g-label">冬・雪・凛</span>
+      </div>
+      <div class="genre-card" data-val="星・宇宙・光">
+        <span class="g-emoji">⭐</span><span class="g-label">星・宇宙・光</span>
+      </div>
+      <div class="genre-card" data-val="古風・和風">
+        <span class="g-emoji">⛩️</span><span class="g-label">古風・和風</span>
+      </div>
+      <div class="genre-card" data-val="自然・大地">
+        <span class="g-emoji">🌿</span><span class="g-label">自然・大地</span>
+      </div>
+      <div class="genre-card" data-val="龍・虎・鳳">
+        <span class="g-emoji">🐉</span><span class="g-label">龍・虎・鳳</span>
+      </div>
+      <div class="genre-card" data-val="音・楽器・詩">
+        <span class="g-emoji">🎵</span><span class="g-label">音・楽器・詩</span>
+      </div>
+      <div class="genre-card" data-val="色・彩り">
+        <span class="g-emoji">🎨</span><span class="g-label">色・彩り</span>
+      </div>
+      <div class="genre-card" data-val="幸・愛・和">
+        <span class="g-emoji">🍀</span><span class="g-label">幸・愛・和</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 姓と画数 -->
+  <div class="panel">
+    <div class="panel-title">姓（任意）</div>
+    <input class="text-input" id="lastNameInput" type="text" placeholder="例：田中（画数の相性も考慮します）" maxlength="10">
+  </div>
+
+  <!-- 使いたい漢字 -->
+  <div class="panel">
+    <div class="panel-title">使いたい漢字（任意）</div>
+    <input class="text-input" id="kanjiInput" type="text" placeholder="例：蓮、空、愛（複数可）" maxlength="20">
+    <div style="font-size:10px;color:var(--text2)">この漢字を必ず含む名前を提案します</div>
+  </div>
+
+  <!-- 願い・想い -->
+  <div class="panel">
+    <div class="panel-title">子への願い・想い（任意）</div>
+    <textarea class="text-input" id="wishInput" placeholder="例：元気で明るく、人に愛される子に育ってほしい"></textarea>
+  </div>
+
+  <!-- 生成ボタン -->
+  <button class="gen-btn" id="genBtn" onclick="generate()">🐣 名前を提案してもらう</button>
+
+  <!-- ローディング -->
+  <div class="loading" id="loading">
+    AIが考えています
+    <div class="dot-flashing"><span></span><span></span><span></span></div>
+  </div>
+
+  <!-- エラー -->
+  <div class="error-msg" id="errorMsg"></div>
+
+  <!-- 結果 -->
+  <div id="resultArea"></div>
+
+  <div class="ad-space">[ AD ]</div>
+
+  <div style="font-size:11px;color:var(--text2);line-height:2;letter-spacing:0.5px;background:var(--surface);border-radius:var(--r);border:1.5px solid var(--border);padding:14px;">
+    <p style="margin-bottom:6px;font-size:12px;color:var(--text);font-weight:bold">赤ちゃんの名前提案ツールとは？</p>
+    <p><strong>赤ちゃんの命名・名付け</strong>をAIがサポートする無料ツールです。性別・字数・雰囲気・ジャンル（宝石・季節・古風など）・姓との<strong>画数相性</strong>・親の<strong>願い</strong>を入力するだけで名前の候補を提案します。</p>
+    <p style="margin-top:6px"><strong>子供の名前 候補</strong>・<strong>名付け アイデア</strong>・<strong>赤ちゃん 名前 おすすめ</strong>など、命名に迷っているパパ・ママの参考になれば嬉しいです。</p>
+    <p style="margin-top:6px;font-size:10px;color:#aaa">※ 提案はAIによるものです。最終的な命名は戸籍等のルールをご確認のうえ、ご家族でお決めください。</p>
+  </div>
+
+</div>
+
+<footer>© 2026 Mutacco Works. ｜ <a href="https://mutaccoworks.github.io/privacy.html">Privacy Policy</a> ｜ <a href="https://forms.gle/iqYoraUazwuqxXeC9" target="_blank">お問い合わせ</a></footer>
+
+<script>
+var selectedGender = '男の子';
+var selectedMoji = 'こだわらない';
+var selectedVibes = [];
+var selectedGenres = [];
+
+// 性別
+window.selectGender = function(el){
+  document.querySelectorAll('.gender-btn').forEach(function(b){b.classList.remove('on');});
+  el.classList.add('on');
+  selectedGender = el.dataset.val;
+};
+
+// 字数（単一）
+document.querySelectorAll('#mojiGroup .chip').forEach(function(chip){
+  chip.addEventListener('click', function(){
+    document.querySelectorAll('#mojiGroup .chip').forEach(function(c){c.classList.remove('on');});
+    this.classList.add('on');
+    selectedMoji = this.dataset.val;
+  });
+});
+
+// 雰囲気（複数）
+document.querySelectorAll('#vibeGroup .chip').forEach(function(chip){
+  chip.addEventListener('click', function(){
+    this.classList.toggle('on');
+    var val = this.dataset.val;
+    var idx = selectedVibes.indexOf(val);
+    if(idx !== -1) selectedVibes.splice(idx,1);
+    else selectedVibes.push(val);
+  });
+});
+
+// ジャンル（複数）
+document.querySelectorAll('#genreGroup .genre-card').forEach(function(card){
+  card.addEventListener('click', function(){
+    this.classList.toggle('on');
+    var val = this.dataset.val;
+    var idx = selectedGenres.indexOf(val);
+    if(idx !== -1) selectedGenres.splice(idx,1);
+    else selectedGenres.push(val);
+  });
+});
+
+// 生成
+window.generate = async function(){
+  var btn = document.getElementById('genBtn');
+  var loading = document.getElementById('loading');
+  var resultArea = document.getElementById('resultArea');
+  var errorMsg = document.getElementById('errorMsg');
+  var lastName = document.getElementById('lastNameInput').value.trim();
+  var kanjiWish = document.getElementById('kanjiInput').value.trim();
+  var wish = document.getElementById('wishInput').value.trim();
+
+  btn.disabled = true;
+  loading.classList.add('show');
+  resultArea.innerHTML = '';
+  errorMsg.classList.remove('show');
+
+  var prompt = '日本の赤ちゃんの名前を8個提案してください。\n\n';
+  prompt += '【条件】\n';
+  prompt += '性別：' + selectedGender + '\n';
+  prompt += '字数：' + selectedMoji + '\n';
+  if(selectedVibes.length > 0) prompt += '雰囲気：' + selectedVibes.join('・') + '\n';
+  if(selectedGenres.length > 0) prompt += 'テーマ・ジャンル：' + selectedGenres.join('・') + '\n';
+  if(lastName) prompt += '姓：' + lastName + '（この姓との画数相性も考慮してください）\n';
+  if(kanjiWish) prompt += '必ず含めたい漢字：' + kanjiWish + '（この漢字を1文字以上含む名前を提案してください）\n';
+  if(wish) prompt += '親の願い：' + wish + '\n';
+  // 人気の読みリスト
+var popularYomiBoy = 'はると・みなと・そうた・りく・はな・ゆいと・あお・れん・なぎ・こうた・しょう・かいと・ゆうと・けんと・あおい・らん・あさひ・はる・ゆうき・たくみ・いつき・けい・りょう・まなと・こうき・さくと・つばさ・だいき・かいと・たいよう・しんじ・りょうた・はるき・そうま・のぞむ・まさき・なおき・ひろと・あつき・とうま・そら・ひびき・かなた・いさみ・つばき・きよと・さとる・たくと・ゆうた・けんじ';
+var popularYomiGirl = 'ひまり・りん・えな・めい・ほのか・さくら・あかり・ゆい・あお・みお・ひな・こはる・のあ・さな・なな・みう・すい・あんな・ゆな・せな・あいな・なつき・ここな・ことね・みなみ・るな・あおい・ひなた・ゆきな・みく・ちはる・なごみ・しの・ことは・ゆいな・まなか・あやか・もも・あやね・いちか・れいな・ひより・なつめ・あやの・かえで・まほ・ゆきの・みさき・かりん・なずな';
+var popularYomiBoth = 'あおい・ひなた・なぎ・はる・そら・みなと・れん・りく・いつき・かえで・なつき・ゆき・ひびき・つばさ・あかり・こはる・みどり・あんな・ことは・ちはる';
+
+prompt += '\n【重要：読みの制約】\n';
+if(selectedGender === '男の子'){
+  prompt += '読みは以下の人気の読みリストを参考に、現代の日本で実際に使われている自然な読み方にすること。奇抜な読み方は避ける。\n参考読みリスト（男の子）：' + popularYomiBoy + '\n';
+} else if(selectedGender === '女の子'){
+  prompt += '読みは以下の人気の読みリストを参考に、現代の日本で実際に使われている自然な読み方にすること。奇抜な読み方は避ける。\n参考読みリスト（女の子）：' + popularYomiGirl + '\n';
+} else {
+  prompt += '読みは以下の人気の読みリストを参考に、現代の日本で実際に使われている自然な読み方にすること。奇抜な読み方は避ける。\n参考読みリスト：' + popularYomiBoth + '\n';
+}
+prompt += '※リストと全く同じでなくていいが、同じくらい自然な読み方で提案すること。\n';
+
+prompt += '\n以下のJSON形式のみで返してください。他の文字・説明・マークダウンは一切不要です。\n';
+  prompt += '[\n';
+  prompt += '  {\n';
+  prompt += '    "kanji": "漢字表記",\n';
+  prompt += '    "yomi": "ひらがな読み",\n';
+  prompt += '    "strokes": "名前の総画数（数字のみ）",\n';
+  prompt += '    "meaning": "漢字の意味・由来（40字以内）",\n';
+  prompt += '    "tags": ["タグ1","タグ2"],\n';
+  prompt += '    "point": "この名前のおすすめポイント（30字以内）"\n';
+  prompt += '  }\n';
+  prompt += ']';
+
+  try {
+    var res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 2000,
+        messages: [{role: 'user', content: prompt}]
+      })
+    });
+    var data = await res.json();
+    var text = data.content.map(function(c){return c.text||'';}).join('');
+    var clean = text.replace(/```json|```/g,'').trim();
+    var names = JSON.parse(clean);
+    renderResults(names, lastName);
+  } catch(e) {
+    errorMsg.textContent = '提案の取得に失敗しました。しばらくしてから再度お試しください。';
+    errorMsg.classList.add('show');
+  }
+
+  btn.disabled = false;
+  loading.classList.remove('show');
+};
+
+function renderResults(names, lastName){
+  var area = document.getElementById('resultArea');
+  area.innerHTML = names.map(function(n){
+    var fullName = lastName ? lastName + ' ' + n.kanji : n.kanji;
+    var searchQ = encodeURIComponent(n.kanji + ' 名前 意味');
+    var tags = (n.tags||[]).map(function(t){
+      return '<span class="name-tag">'+t+'</span>';
+    }).join('');
+    return '<div class="name-card">'
+      +'<div class="name-card-head">'
+      +'<div class="name-kanji">'+n.kanji+'</div>'
+      +'<div class="name-yomi">（'+n.yomi+'）</div>'
+      +(n.strokes ? '<div class="name-strokes">'+n.strokes+'画</div>' : '')
+      +'</div>'
+      +(n.meaning ? '<div class="name-meaning">'+n.meaning+'</div>' : '')
+      +(n.point ? '<div class="name-meaning" style="color:var(--accent);font-size:12px">💡 '+n.point+'</div>' : '')
+      +(tags ? '<div class="name-tags">'+tags+'</div>' : '')
+      +'<div class="name-links">'
+      +'<a class="name-link" href="https://www.google.com/search?q='+searchQ+'" target="_blank">🔍 意味を調べる</a>'
+      +'<a class="name-link" href="kakusu.html?last='+encodeURIComponent(lastName||'')+'&first='+encodeURIComponent(n.kanji)+'" target="_blank">🌸 画数を診断</a>'
+      +'</div>'
+      +'</div>';
+  }).join('');
+
+  area.scrollIntoView({behavior:'smooth', block:'start'});
+}
+</script>
+</body>
+</html>

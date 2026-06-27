@@ -1688,6 +1688,18 @@ function diagnose() {
 }
 
 document.getElementById('lastNameInput').addEventListener('keydown', function(e){ if(e.key==='Enter') document.getElementById('firstNameInput').focus(); });
+
+// URLパラメータから名前を自動入力
+(function(){
+  var params = new URLSearchParams(window.location.search);
+  var last = params.get('last');
+  var first = params.get('first');
+  if(first){
+    if(last) document.getElementById('lastNameInput').value = last;
+    document.getElementById('firstNameInput').value = first;
+    setTimeout(function(){ diagnose(); }, 300);
+  }
+})();
 document.getElementById('firstNameInput').addEventListener('keydown', function(e){ if(e.key==='Enter') diagnose(); });
 </script>
 </body>
