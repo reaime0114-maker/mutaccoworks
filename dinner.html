@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>晩御飯メニュー提案 | 今日の夕食をAIが考える | むたっこ製作所</title>
-<meta name="description" content="今日の晩御飯に迷ったらここ。食材・ジャンル・調理時間・人数を選ぶだけでAIがメニューを提案。クックパッド・クラシルへのレシピ検索リンクつき。登録不要・無料・スマホ対応。むたっこ製作所。">
+<title>晩御飯メニュー提案 | 今日の夕食をランダム提案 | むたっこ製作所</title>
+<meta name="description" content="今日の晩御飯に迷ったらここ。食べたいジャンル・調理時間・カテゴリを選ぶだけでメニューを提案。クックパッド・クラシルへのレシピ検索リンクつき。登録不要・無料・スマホ対応。むたっこ製作所。">
 <link rel="icon" href="images/icon.png">
 <link rel="canonical" href="https://mutaccoworks.github.io/dinner.html">
 <link href="https://fonts.googleapis.com/css2?family=M+PLUS+1p:wght@400;700;900&family=Zen+Kaku+Gothic+New:wght@400;700&display=swap" rel="stylesheet">
@@ -12,19 +12,11 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --bg:#fffaf5;
-  --surface:#ffffff;
-  --surface2:#fff5ec;
-  --accent:#e06b20;
-  --accent2:#f5a623;
-  --text:#2a1a0a;
-  --text2:#7a5a3a;
-  --border:#f0d8c0;
-  --r:14px;
+  --bg:#fffaf5;--surface:#ffffff;--surface2:#fff5ec;
+  --accent:#e06b20;--accent2:#f5a623;
+  --text:#2a1a0a;--text2:#7a5a3a;--border:#f0d8c0;--r:14px;
 }
 body{background:var(--bg);color:var(--text);font-family:'Zen Kaku Gothic New',sans-serif;min-height:100vh;}
-
-/* バナー */
 .top-banner{width:100%;background:#fff;border-bottom:2px solid #d0e8ec;padding:0;text-decoration:none;display:block;}
 .top-banner-inner{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;}
 .top-banner-left{display:flex;align-items:center;gap:10px;}
@@ -35,82 +27,41 @@ body{background:var(--bg);color:var(--text);font-family:'Zen Kaku Gothic New',sa
 .top-banner-en{font-size:9px;color:#0191a2;letter-spacing:0.5px;white-space:nowrap;}
 .top-banner-btn{background:linear-gradient(90deg,#005f6b,#0191a2,#00d4e8,#0191a2,#005f6b);background-size:300%;color:#fff;font-size:12px;font-weight:bold;padding:8px 14px;border-radius:20px;letter-spacing:1px;white-space:nowrap;box-shadow:0 2px 12px rgba(1,145,162,0.4);animation:gbg 2s linear infinite;}
 @keyframes gbg{0%{background-position:0%}100%{background-position:300%}}
-
 .page-header{text-align:center;padding:24px 16px 8px;}
 .page-header h1{font-family:'M PLUS 1p',sans-serif;font-size:24px;font-weight:900;letter-spacing:3px;color:var(--accent);}
 .page-header p{font-size:12px;color:var(--text2);margin-top:4px;letter-spacing:1px;}
-
 .main{max-width:640px;margin:0 auto;padding:0 16px 40px;display:flex;flex-direction:column;gap:16px;}
-
-/* パネル */
 .panel{background:var(--surface);border-radius:var(--r);border:1.5px solid var(--border);padding:16px;display:flex;flex-direction:column;gap:12px;}
 .panel-title{font-size:11px;font-weight:700;letter-spacing:3px;color:var(--accent);border-bottom:1px solid var(--border);padding-bottom:8px;}
-
-/* 食材入力 */
-.tag-input-wrap{display:flex;flex-wrap:wrap;gap:6px;border:1.5px solid var(--border);border-radius:10px;padding:8px;background:var(--surface2);min-height:48px;cursor:text;align-items:center;}
-.tag-input-wrap:focus-within{border-color:var(--accent);}
-.tag{background:var(--accent);color:#fff;border-radius:20px;padding:3px 10px;font-size:12px;display:flex;align-items:center;gap:4px;white-space:nowrap;}
-.tag-del{cursor:pointer;opacity:0.7;font-size:14px;line-height:1;}
-.tag-del:hover{opacity:1;}
-.tag-raw{border:none;outline:none;background:transparent;font-size:13px;font-family:'Zen Kaku Gothic New',sans-serif;color:var(--text);min-width:80px;flex:1;}
-
-/* 選択ボタン */
 .chip-group{display:flex;flex-wrap:wrap;gap:6px;}
 .chip{border:1.5px solid var(--border);border-radius:20px;padding:6px 14px;font-size:12px;cursor:pointer;background:#fff;transition:all 0.15s;letter-spacing:0.5px;font-family:'Zen Kaku Gothic New',sans-serif;}
 .chip.on{background:var(--accent);color:#fff;border-color:var(--accent);}
 .chip:hover:not(.on){border-color:var(--accent);color:var(--accent);}
-
-/* 人数 */
-.num-row{display:flex;align-items:center;gap:10px;}
-.num-btn{width:36px;height:36px;border-radius:50%;border:1.5px solid var(--border);background:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;color:var(--text);}
-.num-btn:hover{border-color:var(--accent);color:var(--accent);}
-.num-display{font-family:'M PLUS 1p',sans-serif;font-size:22px;font-weight:900;color:var(--accent);width:40px;text-align:center;}
-
-/* 生成ボタン */
-.gen-btn{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-family:'M PLUS 1p',sans-serif;font-size:16px;font-weight:900;letter-spacing:3px;border:none;border-radius:var(--r);padding:16px;cursor:pointer;box-shadow:0 4px 16px rgba(224,107,32,0.4);transition:transform 0.1s,box-shadow 0.1s;}
-.gen-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(224,107,32,0.5);}
+.gen-btn{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-family:'M PLUS 1p',sans-serif;font-size:16px;font-weight:900;letter-spacing:3px;border:none;border-radius:var(--r);padding:16px;cursor:pointer;box-shadow:0 4px 16px rgba(224,107,32,0.4);transition:transform 0.1s;}
+.gen-btn:hover{transform:translateY(-1px);}
 .gen-btn:active{transform:scale(0.98);}
-.gen-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
-
-/* ローディング */
-.loading{text-align:center;padding:20px;color:var(--text2);font-size:13px;letter-spacing:2px;display:none;}
-.loading.show{display:block;}
-
-/* 結果カード */
 .result-list{display:flex;flex-direction:column;gap:10px;}
 .menu-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r);overflow:hidden;transition:box-shadow 0.2s;}
 .menu-card:hover{box-shadow:0 4px 16px rgba(224,107,32,0.15);}
 .menu-card-head{padding:12px 14px;display:flex;align-items:flex-start;justify-content:space-between;gap:8px;}
-.menu-name{font-family:'M PLUS 1p',sans-serif;font-size:17px;font-weight:700;color:var(--text);flex:1;}
-.menu-badge{font-size:10px;letter-spacing:1px;padding:3px 8px;border-radius:10px;background:var(--surface2);color:var(--accent);border:1px solid var(--border);white-space:nowrap;flex-shrink:0;}
-.menu-desc{padding:0 14px 8px;font-size:12px;color:var(--text2);line-height:1.7;}
+.menu-name{font-family:'M PLUS 1p',sans-serif;font-size:18px;font-weight:700;color:var(--text);flex:1;}
+.menu-badges{display:flex;gap:4px;flex-wrap:wrap;flex-shrink:0;}
+.menu-badge{font-size:10px;letter-spacing:0.5px;padding:3px 8px;border-radius:10px;background:var(--surface2);color:var(--accent);border:1px solid var(--border);white-space:nowrap;}
 .menu-links{padding:8px 14px 12px;display:flex;gap:6px;flex-wrap:wrap;}
 .recipe-link{display:inline-flex;align-items:center;gap:4px;padding:5px 12px;border-radius:20px;font-size:11px;text-decoration:none;letter-spacing:0.5px;transition:all 0.15s;border:1.5px solid var(--border);}
-.recipe-link.cookpad{background:#fff;color:#e60012;border-color:#ffc0c0;}
+.recipe-link.cookpad{color:#e60012;border-color:#ffc0c0;}
 .recipe-link.cookpad:hover{background:#fff0f0;}
-.recipe-link.kurashiru{background:#fff;color:#5b8c3e;border-color:#c0ddb0;}
+.recipe-link.kurashiru{color:#5b8c3e;border-color:#c0ddb0;}
 .recipe-link.kurashiru:hover{background:#f0f8ec;}
-.recipe-link.google{background:#fff;color:#4a6cf7;border-color:#c0ccff;}
+.recipe-link.google{color:#4a6cf7;border-color:#c0ccff;}
 .recipe-link.google:hover{background:#f0f2ff;}
-
-.error-msg{background:#fff0f0;border:1.5px solid #ffc0c0;border-radius:10px;padding:12px 14px;font-size:12px;color:#cc0000;display:none;}
-.error-msg.show{display:block;}
-
-.ad-space{width:100%;height:60px;background:#f5ede5;border:1px dashed var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#ccc;font-size:10px;letter-spacing:2px;}
-
+.no-result{text-align:center;padding:24px;color:var(--text2);font-size:13px;line-height:2;}
+.ad-space{width:100%;height:60px;background:#fdf3e3;border:1px dashed var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#ccc;font-size:10px;letter-spacing:2px;}
 footer{text-align:center;padding:16px;font-size:10px;color:#aaa;letter-spacing:2px;}
 footer a{color:#aaa;text-decoration:none;}
-
-/* ローディングアニメ */
-.dot-flashing{display:inline-flex;gap:6px;margin-left:8px;}
-.dot-flashing span{width:6px;height:6px;border-radius:50%;background:var(--accent2);animation:dotfl 1s infinite;}
-.dot-flashing span:nth-child(2){animation-delay:0.2s;}
-.dot-flashing span:nth-child(3){animation-delay:0.4s;}
-@keyframes dotfl{0%,80%,100%{opacity:0.2}40%{opacity:1}}
 </style>
 </head>
 <body>
-
 <a class="top-banner" href="index.html">
   <div class="top-banner-inner">
     <div class="top-banner-left">
@@ -126,47 +77,37 @@ footer a{color:#aaa;text-decoration:none;}
 
 <div class="page-header">
   <h1>🍳 晩御飯 なに食べよ</h1>
-  <p>条件を選ぶだけ ― AIが今夜のメニューを提案します</p>
+  <p>条件を選ぶだけ ― 今夜のメニューを提案します</p>
 </div>
 
 <div class="main">
-
   <div class="ad-space">[ AD ]</div>
 
-  <!-- 食材 -->
+  <!-- カテゴリ -->
   <div class="panel">
-    <div class="panel-title">冷蔵庫にある食材（任意）</div>
-    <div class="tag-input-wrap" id="tagWrap" onclick="document.getElementById('tagInput').focus()">
-      <input id="tagInput" class="tag-raw" placeholder="例：鶏肉、豆腐、卵…Enterで追加">
+    <div class="panel-title">カテゴリ（複数選択可）</div>
+    <div class="chip-group" id="categoryGroup">
+      <div class="chip on" data-val="all">🍽 なんでも</div>
+      <div class="chip" data-val="main">🥩 メイン</div>
+      <div class="chip" data-val="sub">🥦 副菜</div>
+      <div class="chip" data-val="soup">🍲 汁物</div>
+      <div class="chip" data-val="rice">🍚 丼・ご飯もの</div>
+      <div class="chip" data-val="noodle">🍜 麺類</div>
+      <div class="chip" data-val="salad">🥗 サラダ</div>
     </div>
-    <div style="font-size:10px;color:var(--text2)">食材を入力してEnterで追加。空欄でもOK！</div>
   </div>
 
   <!-- ジャンル -->
   <div class="panel">
-    <div class="panel-title">食べたいジャンル</div>
+    <div class="panel-title">ジャンル（複数選択可）</div>
     <div class="chip-group" id="genreGroup">
-      <div class="chip on" data-val="なんでも">🍽 なんでも</div>
-      <div class="chip" data-val="和食">🍜 和食</div>
-      <div class="chip" data-val="洋食">🍝 洋食</div>
-      <div class="chip" data-val="中華">🥟 中華</div>
-      <div class="chip" data-val="韓国料理">🌶 韓国料理</div>
-      <div class="chip" data-val="イタリアン">🍕 イタリアン</div>
-      <div class="chip" data-val="エスニック">🌴 エスニック</div>
-    </div>
-  </div>
-
-  <!-- カテゴリ -->
-  <div class="panel">
-    <div class="panel-title">料理のカテゴリ（複数選択可）</div>
-    <div class="chip-group" id="categoryGroup">
-      <div class="chip on" data-val="なんでも">🍽 なんでも</div>
-      <div class="chip" data-val="メイン">🥩 メイン</div>
-      <div class="chip" data-val="副菜">🥦 副菜</div>
-      <div class="chip" data-val="汁物">🍲 汁物</div>
-      <div class="chip" data-val="丼・ご飯もの">🍚 丼・ご飯もの</div>
-      <div class="chip" data-val="麺類">🍜 麺類</div>
-      <div class="chip" data-val="サラダ">🥗 サラダ</div>
+      <div class="chip on" data-val="all">🍽 なんでも</div>
+      <div class="chip" data-val="japanese">🍜 和食</div>
+      <div class="chip" data-val="western">🍝 洋食</div>
+      <div class="chip" data-val="chinese">🥟 中華</div>
+      <div class="chip" data-val="korean">🌶 韓国料理</div>
+      <div class="chip" data-val="italian">🍕 イタリアン</div>
+      <div class="chip" data-val="ethnic">🌴 エスニック</div>
     </div>
   </div>
 
@@ -174,112 +115,255 @@ footer a{color:#aaa;text-decoration:none;}
   <div class="panel">
     <div class="panel-title">調理時間のめやす</div>
     <div class="chip-group" id="timeGroup">
-      <div class="chip on" data-val="問わない">⏱ 問わない</div>
-      <div class="chip" data-val="15分以内">15分以内</div>
-      <div class="chip" data-val="30分以内">30分以内</div>
-      <div class="chip" data-val="1時間以内">1時間以内</div>
+      <div class="chip on" data-val="all">⏱ 問わない</div>
+      <div class="chip" data-val="15">15分以内</div>
+      <div class="chip" data-val="30">30分以内</div>
+      <div class="chip" data-val="60">1時間以内</div>
     </div>
   </div>
 
-  <!-- 人数 -->
-  <div class="panel">
-    <div class="panel-title">人数</div>
-    <div class="num-row">
-      <button class="num-btn" onclick="changeNum(-1)">－</button>
-      <div class="num-display" id="numDisplay">2</div>
-      <span style="font-size:14px;color:var(--text2)">人分</span>
-      <button class="num-btn" onclick="changeNum(1)">＋</button>
-    </div>
-  </div>
-
-  <!-- 生成ボタン -->
-  <button class="gen-btn" id="genBtn" onclick="generate()">🍴 今夜のメニューを提案する</button>
-
-  <!-- ローディング -->
-  <div class="loading" id="loading">
-    AIが考え中です
-    <div class="dot-flashing"><span></span><span></span><span></span></div>
-  </div>
-
-  <!-- エラー -->
-  <div class="error-msg" id="errorMsg"></div>
-
-  <!-- 結果 -->
+  <button class="gen-btn" onclick="generate()">🍴 今夜のメニューを提案する</button>
   <div class="result-list" id="resultList"></div>
 
   <div class="ad-space">[ AD ]</div>
 
   <div style="font-size:11px;color:var(--text2);line-height:2;letter-spacing:0.5px;">
-    <p style="margin-bottom:8px;font-size:12px;color:var(--text);font-weight:bold">晩御飯メニュー提案ツールとは？</p>
-    <p>今日の<strong>夕食・晩御飯のメニュー</strong>が思い浮かばないときに役立つAIツールです。<strong>冷蔵庫にある食材</strong>や<strong>食べたいジャンル</strong>・<strong>調理時間</strong>を選ぶだけで<strong>夕飯のメニュー</strong>を提案します。</p>
-    <p style="margin-top:6px">提案されたメニューは<strong>クックパッド</strong>・<strong>クラシル</strong>のレシピ検索にそのままつながります。<strong>今日の献立</strong>・<strong>夕食 何にしよう</strong>・<strong>晩御飯 アイデア</strong>に迷ったときにどうぞ。</p>
+    <p style="margin-bottom:6px;font-size:12px;color:var(--text);font-weight:bold">晩御飯メニュー提案ツールとは？</p>
+    <p>今日の<strong>夕食・晩御飯のメニュー</strong>が思い浮かばないときに役立つツールです。<strong>カテゴリ</strong>や<strong>ジャンル</strong>・<strong>調理時間</strong>を選ぶだけで<strong>夕飯のメニュー</strong>を提案します。提案されたメニューは<strong>クックパッド</strong>・<strong>クラシル</strong>のレシピ検索にそのままつながります。<strong>今日の献立</strong>・<strong>夕食 何にしよう</strong>・<strong>晩御飯 アイデア</strong>に迷ったときにどうぞ。</p>
   </div>
-
 </div>
 
 <footer>© 2026 Mutacco Works. ｜ <a href="https://mutaccoworks.github.io/privacy.html">Privacy Policy</a> ｜ <a href="https://forms.gle/iqYoraUazwuqxXeC9" target="_blank">お問い合わせ</a></footer>
 
 <script>
-var tags = [];
-var numPeople = 2;
-var selectedGenre = 'なんでも';
-var selectedTime = '問わない';
-var selectedCategories = ['なんでも'];
+// ===== メニューデータベース =====
+// genre: japanese/western/chinese/korean/italian/ethnic
+// category: main/sub/soup/rice/noodle/salad
+// time: 15/30/60
+var MENUS = [
+  // === 和食・メイン ===
+  {name:'肉じゃが',genre:'japanese',category:'main',time:30},
+  {name:'鶏の唐揚げ',genre:'japanese',category:'main',time:30},
+  {name:'豚の生姜焼き',genre:'japanese',category:'main',time:15},
+  {name:'サバの味噌煮',genre:'japanese',category:'main',time:30},
+  {name:'鮭の塩焼き',genre:'japanese',category:'main',time:15},
+  {name:'ブリの照り焼き',genre:'japanese',category:'main',time:15},
+  {name:'豚バラ大根',genre:'japanese',category:'main',time:30},
+  {name:'鶏のみぞれ煮',genre:'japanese',category:'main',time:30},
+  {name:'豚のしゃぶしゃぶ',genre:'japanese',category:'main',time:15},
+  {name:'鶏の照り焼き',genre:'japanese',category:'main',time:15},
+  {name:'とんカツ',genre:'japanese',category:'main',time:30},
+  {name:'コロッケ',genre:'japanese',category:'main',time:60},
+  {name:'ひじき煮',genre:'japanese',category:'sub',time:30},
+  {name:'筑前煮',genre:'japanese',category:'main',time:60},
+  {name:'肉豆腐',genre:'japanese',category:'main',time:30},
+  {name:'焼き魚（アジ）',genre:'japanese',category:'main',time:15},
+  {name:'カツオのたたき',genre:'japanese',category:'main',time:15},
+  {name:'鶏つくね',genre:'japanese',category:'main',time:30},
+  {name:'豚バラキャベツ蒸し',genre:'japanese',category:'main',time:15},
+  {name:'鶏肉の煮物',genre:'japanese',category:'main',time:30},
+  // === 和食・副菜 ===
+  {name:'ほうれん草のおひたし',genre:'japanese',category:'sub',time:15},
+  {name:'きんぴらごぼう',genre:'japanese',category:'sub',time:15},
+  {name:'かぼちゃの煮物',genre:'japanese',category:'sub',time:30},
+  {name:'里芋の煮物',genre:'japanese',category:'sub',time:30},
+  {name:'冷奴',genre:'japanese',category:'sub',time:15},
+  {name:'だし巻き卵',genre:'japanese',category:'sub',time:15},
+  {name:'れんこんのきんぴら',genre:'japanese',category:'sub',time:15},
+  {name:'なすの煮浸し',genre:'japanese',category:'sub',time:15},
+  {name:'小松菜の炒め物',genre:'japanese',category:'sub',time:15},
+  {name:'厚揚げの煮物',genre:'japanese',category:'sub',time:15},
+  // === 和食・汁物 ===
+  {name:'豚汁',genre:'japanese',category:'soup',time:30},
+  {name:'お味噌汁',genre:'japanese',category:'soup',time:15},
+  {name:'けんちん汁',genre:'japanese',category:'soup',time:30},
+  {name:'かき卵汁',genre:'japanese',category:'soup',time:15},
+  {name:'なめこの味噌汁',genre:'japanese',category:'soup',time:15},
+  // === 和食・ご飯もの ===
+  {name:'親子丼',genre:'japanese',category:'rice',time:15},
+  {name:'カツ丼',genre:'japanese',category:'rice',time:30},
+  {name:'牛丼',genre:'japanese',category:'rice',time:15},
+  {name:'炊き込みご飯',genre:'japanese',category:'rice',time:60},
+  {name:'混ぜご飯',genre:'japanese',category:'rice',time:15},
+  {name:'おにぎり',genre:'japanese',category:'rice',time:15},
+  {name:'鮭チャーハン',genre:'japanese',category:'rice',time:15},
+  // === 和食・麺 ===
+  {name:'ざるそば',genre:'japanese',category:'noodle',time:15},
+  {name:'うどん',genre:'japanese',category:'noodle',time:15},
+  {name:'焼きそば',genre:'japanese',category:'noodle',time:15},
+  {name:'にゅうめん',genre:'japanese',category:'noodle',time:15},
+  {name:'月見うどん',genre:'japanese',category:'noodle',time:15},
+  // === 洋食・メイン ===
+  {name:'ハンバーグ',genre:'western',category:'main',time:30},
+  {name:'チキンソテー',genre:'western',category:'main',time:30},
+  {name:'ポークソテー',genre:'western',category:'main',time:15},
+  {name:'ビーフシチュー',genre:'western',category:'main',time:60},
+  {name:'ポークチャップ',genre:'western',category:'main',time:15},
+  {name:'鶏のクリーム煮',genre:'western',category:'main',time:30},
+  {name:'ミートボール',genre:'western',category:'main',time:30},
+  {name:'オムライス',genre:'western',category:'rice',time:30},
+  {name:'ロールキャベツ',genre:'western',category:'main',time:60},
+  {name:'メンチカツ',genre:'western',category:'main',time:30},
+  {name:'チキンのトマト煮',genre:'western',category:'main',time:30},
+  {name:'ポークリブ',genre:'western',category:'main',time:60},
+  {name:'アクアパッツァ',genre:'western',category:'main',time:30},
+  {name:'タンドリーチキン',genre:'western',category:'main',time:30},
+  // === 洋食・副菜 ===
+  {name:'ポテトサラダ',genre:'western',category:'salad',time:30},
+  {name:'コールスロー',genre:'western',category:'salad',time:15},
+  {name:'マカロニサラダ',genre:'western',category:'salad',time:15},
+  {name:'コーンスープ',genre:'western',category:'soup',time:15},
+  {name:'ミネストローネ',genre:'western',category:'soup',time:30},
+  {name:'クリームスープ',genre:'western',category:'soup',time:30},
+  {name:'グリーンサラダ',genre:'western',category:'salad',time:15},
+  {name:'カプレーゼ',genre:'western',category:'salad',time:15},
+  {name:'フレンチトースト',genre:'western',category:'main',time:15},
+  // === 洋食・ご飯 ===
+  {name:'カレーライス',genre:'western',category:'rice',time:60},
+  {name:'ハヤシライス',genre:'western',category:'rice',time:30},
+  {name:'ドライカレー',genre:'western',category:'rice',time:30},
+  {name:'ピラフ',genre:'western',category:'rice',time:30},
+  {name:'チキンライス',genre:'western',category:'rice',time:15},
+  // === 中華・メイン ===
+  {name:'麻婆豆腐',genre:'chinese',category:'main',time:15},
+  {name:'回鍋肉',genre:'chinese',category:'main',time:15},
+  {name:'青椒肉絲',genre:'chinese',category:'main',time:15},
+  {name:'酢豚',genre:'chinese',category:'main',time:30},
+  {name:'エビチリ',genre:'chinese',category:'main',time:15},
+  {name:'エビマヨ',genre:'chinese',category:'main',time:15},
+  {name:'八宝菜',genre:'chinese',category:'main',time:15},
+  {name:'鶏肉のカシューナッツ炒め',genre:'chinese',category:'main',time:15},
+  {name:'豚肉とキャベツの炒め物',genre:'chinese',category:'main',time:15},
+  {name:'レバニラ炒め',genre:'chinese',category:'main',time:15},
+  {name:'チンジャオロース',genre:'chinese',category:'main',time:15},
+  {name:'餃子',genre:'chinese',category:'main',time:30},
+  {name:'春巻き',genre:'chinese',category:'main',time:30},
+  {name:'唐揚げ（中華風）',genre:'chinese',category:'main',time:30},
+  // === 中華・副菜・スープ ===
+  {name:'バンバンジー',genre:'chinese',category:'salad',time:15},
+  {name:'きゅうりの中華和え',genre:'chinese',category:'sub',time:15},
+  {name:'わかめスープ',genre:'chinese',category:'soup',time:15},
+  {name:'卵スープ',genre:'chinese',category:'soup',time:15},
+  {name:'中華風冷奴',genre:'chinese',category:'sub',time:15},
+  // === 中華・ご飯・麺 ===
+  {name:'チャーハン',genre:'chinese',category:'rice',time:15},
+  {name:'中華丼',genre:'chinese',category:'rice',time:15},
+  {name:'天津飯',genre:'chinese',category:'rice',time:15},
+  {name:'ラーメン',genre:'chinese',category:'noodle',time:15},
+  {name:'担々麺',genre:'chinese',category:'noodle',time:30},
+  {name:'冷やし中華',genre:'chinese',category:'noodle',time:15},
+  {name:'焼きビーフン',genre:'chinese',category:'noodle',time:15},
+  // === 韓国料理 ===
+  {name:'プルコギ',genre:'korean',category:'main',time:30},
+  {name:'チーズタッカルビ',genre:'korean',category:'main',time:30},
+  {name:'サムギョプサル',genre:'korean',category:'main',time:15},
+  {name:'チャプチェ',genre:'korean',category:'main',time:30},
+  {name:'スンドゥブチゲ',genre:'korean',category:'soup',time:30},
+  {name:'キムチチゲ',genre:'korean',category:'soup',time:30},
+  {name:'ビビンバ',genre:'korean',category:'rice',time:30},
+  {name:'石焼きビビンバ',genre:'korean',category:'rice',time:30},
+  {name:'参鶏湯',genre:'korean',category:'soup',time:60},
+  {name:'チヂミ',genre:'korean',category:'main',time:15},
+  {name:'ナムル',genre:'korean',category:'sub',time:15},
+  {name:'冷麺',genre:'korean',category:'noodle',time:15},
+  {name:'ユッケジャン',genre:'korean',category:'soup',time:30},
+  {name:'ポッサム',genre:'korean',category:'main',time:60},
+  {name:'トッポギ',genre:'korean',category:'main',time:15},
+  // === イタリアン ===
+  {name:'スパゲッティミートソース',genre:'italian',category:'noodle',time:30},
+  {name:'カルボナーラ',genre:'italian',category:'noodle',time:15},
+  {name:'ペペロンチーノ',genre:'italian',category:'noodle',time:15},
+  {name:'アラビアータ',genre:'italian',category:'noodle',time:15},
+  {name:'ボンゴレビアンコ',genre:'italian',category:'noodle',time:15},
+  {name:'トマトクリームパスタ',genre:'italian',category:'noodle',time:15},
+  {name:'マルゲリータ',genre:'italian',category:'main',time:30},
+  {name:'リゾット',genre:'italian',category:'rice',time:30},
+  {name:'チキンのマリナーラ',genre:'italian',category:'main',time:30},
+  {name:'ラザニア',genre:'italian',category:'main',time:60},
+  {name:'バジルチキン',genre:'italian',category:'main',time:30},
+  {name:'ジェノベーゼパスタ',genre:'italian',category:'noodle',time:15},
+  {name:'サラダピザ',genre:'italian',category:'main',time:30},
+  {name:'ティラミス風サラダ',genre:'italian',category:'salad',time:15},
+  {name:'ニョッキのトマトソース',genre:'italian',category:'noodle',time:30},
+  // === エスニック ===
+  {name:'グリーンカレー',genre:'ethnic',category:'main',time:30},
+  {name:'レッドカレー',genre:'ethnic',category:'main',time:30},
+  {name:'ガパオライス',genre:'ethnic',category:'rice',time:15},
+  {name:'パッタイ',genre:'ethnic',category:'noodle',time:15},
+  {name:'フォー',genre:'ethnic',category:'noodle',time:30},
+  {name:'バインミー風サンドイッチ',genre:'ethnic',category:'main',time:15},
+  {name:'タコス',genre:'ethnic',category:'main',time:30},
+  {name:'ブリトー',genre:'ethnic',category:'main',time:30},
+  {name:'ナシゴレン',genre:'ethnic',category:'rice',time:15},
+  {name:'トムヤムクン',genre:'ethnic',category:'soup',time:30},
+  {name:'ビーフカレー（インド風）',genre:'ethnic',category:'main',time:60},
+  {name:'サモサ',genre:'ethnic',category:'main',time:30},
+  {name:'チャーハン（タイ風）',genre:'ethnic',category:'rice',time:15},
+  {name:'ラープ',genre:'ethnic',category:'salad',time:15},
+  {name:'ヤムウンセン',genre:'ethnic',category:'salad',time:15},
+  {name:'サテー',genre:'ethnic',category:'main',time:30},
+  {name:'バターチキンカレー',genre:'ethnic',category:'main',time:30},
+  {name:'キーマカレー',genre:'ethnic',category:'main',time:30},
+  {name:'チリコンカン',genre:'ethnic',category:'main',time:30},
+  {name:'モロッコ風チキン煮込み',genre:'ethnic',category:'main',time:60},
+  // === 追加メニュー ===
+  {name:'豆腐ステーキ',genre:'japanese',category:'main',time:15},
+  {name:'鶏肉とじゃがいもの煮物',genre:'japanese',category:'main',time:30},
+  {name:'ちゃんこ鍋',genre:'japanese',category:'main',time:30},
+  {name:'すき焼き',genre:'japanese',category:'main',time:30},
+  {name:'しゃぶしゃぶ',genre:'japanese',category:'main',time:15},
+  {name:'水炊き',genre:'japanese',category:'main',time:30},
+  {name:'もつ鍋',genre:'japanese',category:'main',time:30},
+  {name:'豆腐チゲ',genre:'korean',category:'soup',time:30},
+  {name:'タコライス',genre:'ethnic',category:'rice',time:15},
+  {name:'ハンバーガー',genre:'western',category:'main',time:30},
+  {name:'クラムチャウダー',genre:'western',category:'soup',time:30},
+  {name:'ポトフ',genre:'western',category:'soup',time:60},
+  {name:'グラタン',genre:'western',category:'main',time:60},
+  {name:'ドリア',genre:'western',category:'rice',time:30},
+  {name:'キッシュ',genre:'western',category:'main',time:60},
+  {name:'チキンのバジル炒め',genre:'italian',category:'main',time:15},
+  {name:'海鮮パスタ',genre:'italian',category:'noodle',time:30},
+  {name:'きのこのリゾット',genre:'italian',category:'rice',time:30},
+  {name:'サバのカレー煮',genre:'japanese',category:'main',time:30},
+  {name:'豚の角煮',genre:'japanese',category:'main',time:60},
+  {name:'煮豚',genre:'japanese',category:'main',time:60},
+  {name:'照り焼きチキンバーガー',genre:'western',category:'main',time:30},
+  {name:'えびフライ',genre:'western',category:'main',time:30},
+  {name:'フィッシュアンドチップス',genre:'western',category:'main',time:30},
+  {name:'ステーキ',genre:'western',category:'main',time:15},
+  {name:'豆腐の麻婆風',genre:'chinese',category:'main',time:15},
+  {name:'ホイコーロー',genre:'chinese',category:'main',time:15},
+  {name:'白菜の中華炒め',genre:'chinese',category:'sub',time:15},
+  {name:'坦々鍋',genre:'chinese',category:'soup',time:30},
+  {name:'プデチゲ',genre:'korean',category:'soup',time:30},
+  {name:'カムジャタン',genre:'korean',category:'soup',time:60},
+  {name:'ケジャン風和え',genre:'korean',category:'sub',time:15},
+  {name:'海南チキンライス',genre:'ethnic',category:'rice',time:60},
+  {name:'フィリピン風アドボ',genre:'ethnic',category:'main',time:30},
+  {name:'マッサマンカレー',genre:'ethnic',category:'main',time:60},
+];
 
-// 食材タグ
-var tagInput = document.getElementById('tagInput');
-tagInput.addEventListener('keydown', function(e){
-  if(e.key === 'Enter' || e.key === ',' || e.key === '、'){
-    e.preventDefault();
-    var val = this.value.trim().replace(/[,、]/g, '');
-    if(val && tags.indexOf(val) === -1){
-      tags.push(val);
-      renderTags();
-    }
-    this.value = '';
-  } else if(e.key === 'Backspace' && this.value === '' && tags.length > 0){
-    tags.pop();
-    renderTags();
-  }
-});
+var selectedCategories = ['all'];
+var selectedGenres = ['all'];
+var selectedTime = 'all';
 
-function renderTags(){
-  var wrap = document.getElementById('tagWrap');
-  wrap.innerHTML = '';
-  tags.forEach(function(t, i){
-    var span = document.createElement('span');
-    span.className = 'tag';
-    span.innerHTML = t + '<span class="tag-del" onclick="removeTag('+i+')">×</span>';
-    wrap.appendChild(span);
-  });
-  wrap.appendChild(tagInput);
-  tagInput.focus();
-}
-
-window.removeTag = function(i){
-  tags.splice(i, 1);
-  renderTags();
-};
-
-// カテゴリ選択（複数・なんでもは単独）
+// カテゴリ選択
 document.querySelectorAll('#categoryGroup .chip').forEach(function(chip){
   chip.addEventListener('click', function(){
     var val = this.dataset.val;
-    if(val === 'なんでも'){
-      selectedCategories = ['なんでも'];
+    if(val === 'all'){
+      selectedCategories = ['all'];
       document.querySelectorAll('#categoryGroup .chip').forEach(function(c){c.classList.remove('on');});
       this.classList.add('on');
     } else {
-      var nandemo = document.querySelector('#categoryGroup .chip[data-val="なんでも"]');
-      nandemo.classList.remove('on');
-      selectedCategories = selectedCategories.filter(function(v){return v !== 'なんでも';});
+      var noneCard = document.querySelector('#categoryGroup .chip[data-val="all"]');
+      noneCard.classList.remove('on');
+      selectedCategories = selectedCategories.filter(function(v){return v !== 'all';});
       if(this.classList.contains('on')){
         this.classList.remove('on');
         selectedCategories = selectedCategories.filter(function(v){return v !== val;});
-        if(selectedCategories.length === 0){
-          selectedCategories = ['なんでも'];
-          nandemo.classList.add('on');
-        }
+        if(selectedCategories.length === 0){selectedCategories=['all']; noneCard.classList.add('on');}
       } else {
         this.classList.add('on');
         selectedCategories.push(val);
@@ -288,16 +372,31 @@ document.querySelectorAll('#categoryGroup .chip').forEach(function(chip){
   });
 });
 
-// ジャンル選択（単一）
+// ジャンル選択
 document.querySelectorAll('#genreGroup .chip').forEach(function(chip){
   chip.addEventListener('click', function(){
-    document.querySelectorAll('#genreGroup .chip').forEach(function(c){c.classList.remove('on');});
-    this.classList.add('on');
-    selectedGenre = this.dataset.val;
+    var val = this.dataset.val;
+    if(val === 'all'){
+      selectedGenres = ['all'];
+      document.querySelectorAll('#genreGroup .chip').forEach(function(c){c.classList.remove('on');});
+      this.classList.add('on');
+    } else {
+      var noneCard = document.querySelector('#genreGroup .chip[data-val="all"]');
+      noneCard.classList.remove('on');
+      selectedGenres = selectedGenres.filter(function(v){return v !== 'all';});
+      if(this.classList.contains('on')){
+        this.classList.remove('on');
+        selectedGenres = selectedGenres.filter(function(v){return v !== val;});
+        if(selectedGenres.length === 0){selectedGenres=['all']; noneCard.classList.add('on');}
+      } else {
+        this.classList.add('on');
+        selectedGenres.push(val);
+      }
+    }
   });
 });
 
-// 調理時間（単一）
+// 調理時間
 document.querySelectorAll('#timeGroup .chip').forEach(function(chip){
   chip.addEventListener('click', function(){
     document.querySelectorAll('#timeGroup .chip').forEach(function(c){c.classList.remove('on');});
@@ -306,81 +405,51 @@ document.querySelectorAll('#timeGroup .chip').forEach(function(chip){
   });
 });
 
-// 人数
-window.changeNum = function(d){
-  numPeople = Math.max(1, Math.min(10, numPeople + d));
-  document.getElementById('numDisplay').textContent = numPeople;
-};
+function shuffle(arr){
+  var a = arr.slice();
+  for(var i=a.length-1;i>0;i--){
+    var j=Math.floor(Math.random()*(i+1));
+    var t=a[i];a[i]=a[j];a[j]=t;
+  }
+  return a;
+}
 
-// 生成
-window.generate = async function(){
-  var btn = document.getElementById('genBtn');
-  var loading = document.getElementById('loading');
-  var resultList = document.getElementById('resultList');
-  var errorMsg = document.getElementById('errorMsg');
+function generate(){
+  var filtered = MENUS.filter(function(m){
+    var catOk = selectedCategories.indexOf('all') !== -1 || selectedCategories.indexOf(m.category) !== -1;
+    var genreOk = selectedGenres.indexOf('all') !== -1 || selectedGenres.indexOf(m.genre) !== -1;
+    var timeOk = selectedTime === 'all' || m.time <= parseInt(selectedTime);
+    return catOk && genreOk && timeOk;
+  });
 
-  btn.disabled = true;
-  loading.classList.add('show');
-  resultList.innerHTML = '';
-  errorMsg.classList.remove('show');
+  var list = document.getElementById('resultList');
 
-  var prompt = '今夜の晩御飯のメニューを5つ提案してください。\n\n';
-  if(tags.length > 0) prompt += '使いたい食材：' + tags.join('、') + '\n';
-  var catStr = selectedCategories[0] === 'なんでも' ? '問わない' : selectedCategories.join('・');
-prompt += 'カテゴリ（メイン/副菜など）：' + catStr + '\n';
-prompt += 'ジャンル：' + selectedGenre + '\n';
-  prompt += '調理時間：' + selectedTime + '\n';
-  prompt += '人数：' + numPeople + '人分\n\n';
-  prompt += '以下のJSON形式のみで返してください。他の文字は一切含めないでください。\n';
-  prompt += '[\n';
-  prompt += '  {"name":"料理名","genre":"ジャンル","time":"調理時間目安","desc":"一言説明（30字以内）"},\n';
-  prompt += '  ...\n';
-  prompt += ']';
-
-  try {
-    var res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 1000,
-        messages: [{role: 'user', content: prompt}]
-      })
-    });
-    var data = await res.json();
-    var text = data.content.map(function(c){return c.text||'';}).join('');
-    var clean = text.replace(/```json|```/g,'').trim();
-    var menus = JSON.parse(clean);
-    renderResults(menus);
-  } catch(e) {
-    errorMsg.textContent = '提案の取得に失敗しました。しばらくしてから再度お試しください。';
-    errorMsg.classList.add('show');
+  if(filtered.length === 0){
+    list.innerHTML = '<div class="no-result">条件に合うメニューが見つかりませんでした。<br>条件を変えて試してみてください。</div>';
+    return;
   }
 
-  btn.disabled = false;
-  loading.classList.remove('show');
-};
+  var picked = shuffle(filtered).slice(0, 5);
+  var genreLabels = {japanese:'和食',western:'洋食',chinese:'中華',korean:'韓国料理',italian:'イタリアン',ethnic:'エスニック'};
+  var timeLabels = {15:'〜15分',30:'〜30分',60:'〜1時間'};
 
-function renderResults(menus){
-  var list = document.getElementById('resultList');
-  list.innerHTML = '';
-  menus.forEach(function(m){
+  list.innerHTML = picked.map(function(m){
     var q = encodeURIComponent(m.name);
-    var card = document.createElement('div');
-    card.className = 'menu-card';
-    card.innerHTML =
-      '<div class="menu-card-head">'
-      + '<div class="menu-name">' + m.name + '</div>'
-      + '<div class="menu-badge">' + (m.genre||'') + '・' + (m.time||'') + '</div>'
-      + '</div>'
-      + '<div class="menu-desc">' + (m.desc||'') + '</div>'
-      + '<div class="menu-links">'
-      + '<a class="recipe-link cookpad" href="https://cookpad.com/search/' + q + '" target="_blank">🍳 クックパッド</a>'
-      + '<a class="recipe-link kurashiru" href="https://www.kurashiru.com/search?query=' + q + '" target="_blank">🥬 クラシル</a>'
-      + '<a class="recipe-link google" href="https://www.google.com/search?q=' + q + '+レシピ" target="_blank">🔍 Google</a>'
-      + '</div>';
-    list.appendChild(card);
-  });
+    return '<div class="menu-card">'
+      +'<div class="menu-card-head">'
+      +'<div class="menu-name">'+m.name+'</div>'
+      +'<div class="menu-badges">'
+      +'<span class="menu-badge">'+genreLabels[m.genre]+'</span>'
+      +'<span class="menu-badge">'+timeLabels[m.time]+'</span>'
+      +'</div></div>'
+      +'<div class="menu-links">'
+      +'<a class="recipe-link cookpad" href="https://cookpad.com/search/'+q+'" target="_blank">🍳 クックパッド</a>'
+      +'<a class="recipe-link kurashiru" href="https://www.kurashiru.com/search?query='+q+'" target="_blank">🥬 クラシル</a>'
+      +'<a class="recipe-link google" href="https://www.google.com/search?q='+q+'+レシピ" target="_blank">🔍 Google</a>'
+      +'</div></div>';
+  }).join('');
+
+  list.scrollIntoView({behavior:'smooth', block:'start'});
 }
 </script>
 </body>
