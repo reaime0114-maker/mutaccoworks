@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>学歴年度計算ツール | 履歴書の入学・卒業年度を自動計算 | むたっこ製作所</title>
+<meta name="description" content="生まれた年を入力するだけで、小学校・中学校・高校・大学・大学院・専門学校の入学・卒業年度を自動計算。履歴書作成に役立つ無料ツール。登録不要・スマホ対応。むたっこ製作所。">
+<link rel="icon" href="images/icon.png">
+<link rel="canonical" href="https://mutaccoworks.github.io/gakureki.html">
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+1p:wght@400;700;900&family=Zen+Kaku+Gothic+New:wght@400;700&display=swap" rel="stylesheet">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8754050840177143" crossorigin="anonymous"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#f0f8fa;
+  --surface:#ffffff;
+  --accent:#0191a2;
+  --accent2:#00d4e8;
+  --text:#111;
+  --text2:#555;
+  --border:#d0e8ec;
+  --r:12px;
+}
+body{background:var(--bg);color:var(--text);font-family:'Zen Kaku Gothic New',sans-serif;min-height:100vh;}
+
+/* バナー */
+.top-banner{width:100%;background:#fff;border-bottom:2px solid var(--border);padding:0;text-decoration:none;display:block;transition:background 0.2s;}
+.top-banner:hover{background:#f0f8fa;}
+.top-banner-inner{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;}
+.top-banner-left{display:flex;align-items:center;gap:10px;}
+.top-banner-icon{width:36px;height:36px;border-radius:10px;overflow:hidden;flex-shrink:0;background:#fff;border:1px solid #e0e0e0;}
+.top-banner-icon img{width:100%;height:100%;object-fit:cover;display:block;}
+.top-banner-text{display:flex;flex-direction:column;gap:1px;}
+.top-banner-ja{font-size:14px;font-weight:bold;color:#111;letter-spacing:0.5px;}
+.top-banner-en{font-size:9px;color:var(--accent);letter-spacing:0.5px;white-space:nowrap;}
+.top-banner-btn{background:linear-gradient(90deg,#005f6b,#0191a2,#00d4e8,#0191a2,#005f6b);background-size:300%;color:#fff;font-size:12px;font-weight:bold;padding:8px 14px;border-radius:20px;letter-spacing:1px;white-space:nowrap;box-shadow:0 2px 12px rgba(1,145,162,0.4);animation:gbg 2s linear infinite;}
+@keyframes gbg{0%{background-position:0%}100%{background-position:300%}}
+
+.page-header{text-align:center;padding:24px 16px 12px;}
+.page-header h1{font-family:'M PLUS 1p',sans-serif;font-size:22px;font-weight:900;letter-spacing:3px;color:var(--accent);}
+.page-header p{font-size:12px;color:var(--text2);margin-top:4px;letter-spacing:1px;}
+
+.main{max-width:800px;margin:0 auto;padding:0 16px 40px;display:flex;flex-direction:column;gap:16px;}
+
+/* 入力パネル */
+.panel{background:var(--surface);border-radius:var(--r);border:1.5px solid var(--border);padding:16px;display:flex;flex-direction:column;gap:12px;}
+.panel-title{font-size:11px;font-weight:700;letter-spacing:3px;color:var(--accent);border-bottom:1px solid var(--border);padding-bottom:8px;}
+
+.input-area{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;}
+.input-group{display:flex;flex-direction:column;gap:6px;}
+.input-label{font-size:11px;color:var(--text2);letter-spacing:1px;}
+.birth-input{border:1.5px solid var(--border);border-radius:8px;padding:10px 14px;font-size:18px;font-family:'M PLUS 1p',sans-serif;font-weight:700;outline:none;background:#f8fcfd;transition:border-color 0.15s;width:130px;}
+.birth-input:focus{border-color:var(--accent);}
+
+.option-group{display:flex;gap:8px;flex-wrap:wrap;}
+.opt-btn{border:1.5px solid var(--border);border-radius:20px;padding:5px 14px;font-size:12px;cursor:pointer;background:#fff;transition:all 0.15s;letter-spacing:1px;font-family:'Zen Kaku Gothic New',sans-serif;}
+.opt-btn.on{background:var(--accent);color:#fff;border-color:var(--accent);}
+
+/* 結果テーブル */
+.result-area{display:none;flex-direction:column;gap:8px;}
+.result-area.show{display:flex;}
+
+.school-block{background:var(--surface);border-radius:var(--r);border:1.5px solid var(--border);overflow:hidden;}
+.school-header{padding:10px 14px;font-weight:700;font-size:13px;letter-spacing:2px;display:flex;align-items:center;gap:8px;}
+.school-header.elem{background:#e8f5e9;color:#2e7d32;}
+.school-header.mid{background:#e3f2fd;color:#1565c0;}
+.school-header.high{background:#fff3e0;color:#e65100;}
+.school-header.univ{background:#f3e5f5;color:#6a1b9a;}
+.school-header.grad2{background:#fce4ec;color:#880e4f;}
+.school-header.grad3{background:#fce4ec;color:#880e4f;}
+.school-header.senmon{background:#e0f2f1;color:#00695c;}
+
+.school-rows{padding:0;}
+.school-row{display:flex;align-items:center;border-top:1px solid var(--border);padding:10px 14px;gap:12px;}
+.school-row:first-child{border-top:none;}
+.row-label{font-size:12px;color:var(--text2);width:60px;flex-shrink:0;}
+.row-year{font-family:'M PLUS 1p',sans-serif;font-size:16px;font-weight:700;color:var(--text);flex:1;}
+.row-wa{font-size:11px;color:var(--text2);}
+
+.copy-btn{background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:4px 10px;font-size:11px;cursor:pointer;letter-spacing:1px;font-family:'Zen Kaku Gothic New',sans-serif;transition:all 0.15s;}
+.copy-btn:hover{border-color:var(--accent);color:var(--accent);}
+
+/* 注意書き */
+.note{font-size:11px;color:var(--text2);background:#fffde7;border:1px solid #fff9c4;border-radius:8px;padding:10px 12px;line-height:1.8;}
+
+.ad-space{width:100%;height:60px;background:#f0f0f0;border:1px dashed #ccc;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#aaa;font-size:10px;letter-spacing:2px;}
+
+footer{text-align:center;padding:16px;font-size:10px;color:#888;letter-spacing:2px;}
+footer a{color:#888;text-decoration:none;}
+</style>
+</head>
+<body>
+
+<a class="top-banner" href="index.html">
+  <div class="top-banner-inner">
+    <div class="top-banner-left">
+      <div class="top-banner-icon"><img src="images/icon.png" alt="むたっこ製作所"></div>
+      <div class="top-banner-text">
+        <div class="top-banner-ja">むたっこ製作所</div>
+        <div class="top-banner-en">Mutacco Works — 無料ツール集</div>
+      </div>
+    </div>
+    <div class="top-banner-btn">ほかのツールも見ていってね 🐈‍⬛</div>
+  </div>
+</a>
+
+<div class="page-header">
+  <h1>学歴年度 計算</h1>
+  <p>生まれ年を入力するだけ ― 履歴書の入学・卒業年度を自動計算</p>
+</div>
+
+<div class="main">
+
+  <div class="ad-space">[ AD ]</div>
+
+  <!-- 入力 -->
+  <div class="panel">
+    <div class="panel-title">生まれ年を入力</div>
+    <div class="input-area">
+      <div class="input-group">
+        <div class="input-label">西暦（生まれ年）</div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <input class="birth-input" id="birthYear" type="number" placeholder="1990" min="1950" max="2020">
+          <span style="font-size:14px;color:var(--text2)">年生まれ</span>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="input-label" style="margin-bottom:8px">進学先（複数選択可）</div>
+      <div class="option-group" id="optionGroup">
+        <div class="opt-btn on" data-key="univ4">大学（4年制）</div>
+        <div class="opt-btn on" data-key="grad2">大学院（修士2年）</div>
+        <div class="opt-btn" data-key="grad3">大学院（博士3年）</div>
+        <div class="opt-btn" data-key="senmon2">専門学校（2年制）</div>
+        <div class="opt-btn" data-key="senmon3">専門学校（3年制）</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 結果 -->
+  <div class="result-area" id="resultArea"></div>
+
+  <div class="note" id="noteArea" style="display:none">
+    ⚠️ 上記は4月1日以前生まれの一般的なケースです。4月2日以降生まれの場合は1年ずれることがあります。浪人・留年・休学などがある場合は実際の年度に合わせて修正してください。
+  </div>
+
+  <div class="ad-space">[ AD ]</div>
+
+</div>
+
+<footer>© 2026 Mutacco Works. ｜ <a href="https://mutaccoworks.github.io/privacy.html">Privacy Policy</a> ｜ <a href="https://forms.gle/iqYoraUazwuqxXeC9" target="_blank">お問い合わせ</a></footer>
+
+<script>
+var ERAS = [
+  {name:'令和', start:2019, end:null,  offset:2018},
+  {name:'平成', start:1989, end:2019,  offset:1988},
+  {name:'昭和', start:1926, end:1989,  offset:1925},
+  {name:'大正', start:1912, end:1926,  offset:1911},
+  {name:'明治', start:1868, end:1912,  offset:1867},
+];
+
+function toWareki(year){
+  for(var i=0;i<ERAS.length;i++){
+    var e = ERAS[i];
+    var end = e.end || 9999;
+    if(year >= e.start && year < end){
+      var n = year - e.offset;
+      return e.name + (n===1?'元':n) + '年';
+    }
+  }
+  return year + '年';
+}
+
+var selectedOpts = {univ4:true, grad2:true, grad3:false, senmon2:false, senmon3:false};
+
+document.querySelectorAll('.opt-btn').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    var key = this.dataset.key;
+    selectedOpts[key] = !selectedOpts[key];
+    this.classList.toggle('on', selectedOpts[key]);
+    calculate();
+  });
+});
+
+document.getElementById('birthYear').addEventListener('input', calculate);
+
+function calculate(){
+  var birth = parseInt(document.getElementById('birthYear').value);
+  var resultArea = document.getElementById('resultArea');
+  var noteArea = document.getElementById('noteArea');
+
+  if(isNaN(birth) || birth < 1950 || birth > 2020){
+    resultArea.classList.remove('show');
+    noteArea.style.display = 'none';
+    return;
+  }
+
+  // 入学年度計算（4月2日以前生まれの標準ケース）
+  var elem_enter  = birth + 6;   // 小学校入学
+  var elem_exit   = birth + 12;  // 小学校卒業
+  var mid_enter   = birth + 12;
+  var mid_exit    = birth + 15;
+  var high_enter  = birth + 15;
+  var high_exit   = birth + 18;
+  var univ_enter  = birth + 18;
+  var univ_exit   = birth + 22;
+  var grad2_enter = birth + 22;
+  var grad2_exit  = birth + 24;
+  var grad3_enter = birth + 24;
+  var grad3_exit  = birth + 27;
+  var sen2_enter  = birth + 18;
+  var sen2_exit   = birth + 20;
+  var sen3_enter  = birth + 18;
+  var sen3_exit   = birth + 21;
+
+  function row(label, year, copyText){
+    var wa = toWareki(year);
+    return '<div class="school-row">'
+      + '<div class="row-label">' + label + '</div>'
+      + '<div class="row-year">' + year + '年<span class="row-wa">（' + wa + '）</span></div>'
+      + '<button class="copy-btn" onclick="copyText(\'' + copyText + '\')">' + label + 'をコピー</button>'
+      + '</div>';
+  }
+
+  function block(headerClass, title, rows){
+    return '<div class="school-block">'
+      + '<div class="school-header ' + headerClass + '">' + title + '</div>'
+      + '<div class="school-rows">' + rows + '</div>'
+      + '</div>';
+  }
+
+  var html = '';
+
+  html += block('elem', '🏫 小学校',
+    row('入学', elem_enter, elem_enter + '年4月　小学校入学') +
+    row('卒業', elem_exit,  elem_exit  + '年3月　小学校卒業')
+  );
+
+  html += block('mid', '🏫 中学校',
+    row('入学', mid_enter, mid_enter + '年4月　中学校入学') +
+    row('卒業', mid_exit,  mid_exit  + '年3月　中学校卒業')
+  );
+
+  html += block('high', '🏫 高校',
+    row('入学', high_enter, high_enter + '年4月　高等学校入学') +
+    row('卒業', high_exit,  high_exit  + '年3月　高等学校卒業')
+  );
+
+  if(selectedOpts.univ4){
+    html += block('univ', '🎓 大学（4年制）',
+      row('入学', univ_enter, univ_enter + '年4月　大学入学') +
+      row('卒業', univ_exit,  univ_exit  + '年3月　大学卒業')
+    );
+  }
+
+  if(selectedOpts.grad2){
+    var ge = selectedOpts.univ4 ? univ_exit : high_exit;
+    html += block('grad2', '🎓 大学院（修士課程）',
+      row('入学', ge,   ge   + '年4月　大学院修士課程入学') +
+      row('修了', ge+2, ge+2 + '年3月　大学院修士課程修了')
+    );
+  }
+
+  if(selectedOpts.grad3){
+    var ge2 = selectedOpts.grad2
+      ? (selectedOpts.univ4 ? univ_exit + 2 : high_exit + 2)
+      : (selectedOpts.univ4 ? univ_exit : high_exit);
+    html += block('grad3', '🎓 大学院（博士課程）',
+      row('入学', ge2,   ge2   + '年4月　大学院博士課程入学') +
+      row('修了', ge2+3, ge2+3 + '年3月　大学院博士課程修了')
+    );
+  }
+
+  if(selectedOpts.senmon2){
+    html += block('senmon', '🏫 専門学校（2年制）',
+      row('入学', sen2_enter, sen2_enter + '年4月　専門学校入学') +
+      row('卒業', sen2_exit,  sen2_exit  + '年3月　専門学校卒業')
+    );
+  }
+
+  if(selectedOpts.senmon3){
+    html += block('senmon', '🏫 専門学校（3年制）',
+      row('入学', sen3_enter, sen3_enter + '年4月　専門学校入学') +
+      row('卒業', sen3_exit,  sen3_exit  + '年3月　専門学校卒業')
+    );
+  }
+
+  resultArea.innerHTML = html;
+  resultArea.classList.add('show');
+  noteArea.style.display = 'block';
+}
+
+function copyText(text){
+  navigator.clipboard.writeText(text).then(function(){
+    // コピー完了
+  }).catch(function(){
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+  });
+}
+</script>
+</body>
+</html>

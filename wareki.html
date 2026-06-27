@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>西暦和暦変換・早見表 | 令和・平成・昭和対応 | むたっこ製作所</title>
+<meta name="description" content="西暦と和暦（令和・平成・昭和・大正・明治）をすぐ変換。生まれ年から年齢計算も。早見表で一覧確認できる無料ツール。登録不要・スマホ対応。むたっこ製作所。">
+<link rel="icon" href="images/icon.png">
+<link rel="canonical" href="https://mutaccoworks.github.io/wareki.html">
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+1p:wght@400;700;900&family=Zen+Kaku+Gothic+New:wght@400;700&display=swap" rel="stylesheet">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8754050840177143" crossorigin="anonymous"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#f0f8fa;
+  --surface:#ffffff;
+  --accent:#0191a2;
+  --accent2:#00d4e8;
+  --text:#111;
+  --text2:#555;
+  --border:#d0e8ec;
+  --r:12px;
+}
+body{background:var(--bg);color:var(--text);font-family:'Zen Kaku Gothic New',sans-serif;min-height:100vh;}
+
+/* バナー */
+.top-banner{width:100%;background:#fff;border-bottom:2px solid var(--border);padding:0;text-decoration:none;display:block;transition:background 0.2s;}
+.top-banner:hover{background:#f0f8fa;}
+.top-banner-inner{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;}
+.top-banner-left{display:flex;align-items:center;gap:10px;}
+.top-banner-icon{width:36px;height:36px;border-radius:10px;overflow:hidden;flex-shrink:0;background:#fff;border:1px solid #e0e0e0;}
+.top-banner-icon img{width:100%;height:100%;object-fit:cover;display:block;}
+.top-banner-text{display:flex;flex-direction:column;gap:1px;}
+.top-banner-ja{font-size:14px;font-weight:bold;color:#111;letter-spacing:0.5px;}
+.top-banner-en{font-size:9px;color:var(--accent);letter-spacing:0.5px;white-space:nowrap;}
+.top-banner-btn{background:linear-gradient(90deg,#005f6b,#0191a2,#00d4e8,#0191a2,#005f6b);background-size:300%;color:#fff;font-size:12px;font-weight:bold;padding:8px 14px;border-radius:20px;letter-spacing:1px;white-space:nowrap;box-shadow:0 2px 12px rgba(1,145,162,0.4);animation:gbg 2s linear infinite;}
+@keyframes gbg{0%{background-position:0%}100%{background-position:300%}}
+
+.page-header{text-align:center;padding:24px 16px 12px;}
+.page-header h1{font-family:'M PLUS 1p',sans-serif;font-size:22px;font-weight:900;letter-spacing:3px;color:var(--accent);}
+.page-header p{font-size:12px;color:var(--text2);margin-top:4px;letter-spacing:1px;}
+
+.main{max-width:800px;margin:0 auto;padding:0 16px 40px;display:flex;flex-direction:column;gap:16px;}
+
+/* 今日の情報 */
+.today-card{background:linear-gradient(135deg,#0191a2,#00d4e8);border-radius:var(--r);padding:16px 20px;color:#fff;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.today-label{font-size:11px;letter-spacing:2px;opacity:0.85;}
+.today-value{font-family:'M PLUS 1p',sans-serif;font-size:20px;font-weight:900;letter-spacing:2px;}
+
+/* パネル */
+.panel{background:var(--surface);border-radius:var(--r);border:1.5px solid var(--border);padding:16px;display:flex;flex-direction:column;gap:12px;}
+.panel-title{font-size:11px;font-weight:700;letter-spacing:3px;color:var(--accent);border-bottom:1px solid var(--border);padding-bottom:8px;}
+
+/* 変換UI */
+.convert-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media(max-width:500px){.convert-grid{grid-template-columns:1fr;}}
+.convert-box{display:flex;flex-direction:column;gap:8px;}
+.convert-label{font-size:11px;color:var(--text2);letter-spacing:1px;}
+.input-row{display:flex;gap:6px;}
+.convert-input{flex:1;border:1.5px solid var(--border);border-radius:8px;padding:10px 12px;font-size:16px;font-family:'Zen Kaku Gothic New',sans-serif;outline:none;background:#f8fcfd;transition:border-color 0.15s;}
+.convert-input:focus{border-color:var(--accent);}
+.era-select{border:1.5px solid var(--border);border-radius:8px;padding:10px 8px;font-size:14px;background:#f8fcfd;outline:none;font-family:'Zen Kaku Gothic New',sans-serif;}
+.result-box{background:var(--bg);border-radius:8px;padding:12px 14px;font-family:'M PLUS 1p',sans-serif;font-size:18px;font-weight:700;color:var(--accent);min-height:48px;display:flex;align-items:center;letter-spacing:1px;}
+.result-sub{font-size:12px;color:var(--text2);font-weight:400;margin-top:2px;}
+
+/* 年齢計算 */
+.age-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.age-result{font-family:'M PLUS 1p',sans-serif;font-size:28px;font-weight:900;color:var(--accent);}
+.age-unit{font-size:14px;color:var(--text2);}
+
+/* 早見表 */
+.era-tabs{display:flex;gap:6px;flex-wrap:wrap;}
+.era-tab{border:1.5px solid var(--border);border-radius:20px;padding:5px 14px;font-size:12px;cursor:pointer;background:#fff;transition:all 0.15s;letter-spacing:1px;}
+.era-tab.on{background:var(--accent);color:#fff;border-color:var(--accent);}
+.table-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{background:var(--accent);color:#fff;padding:8px 10px;text-align:center;letter-spacing:1px;font-weight:700;}
+td{padding:7px 10px;text-align:center;border-bottom:1px solid var(--border);}
+tr:hover td{background:var(--bg);}
+tr.highlight td{background:rgba(1,145,162,0.12);font-weight:700;color:var(--accent);}
+
+.ad-space{width:100%;height:60px;background:#f0f0f0;border:1px dashed #ccc;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#aaa;font-size:10px;letter-spacing:2px;}
+
+footer{text-align:center;padding:16px;font-size:10px;color:#888;letter-spacing:2px;}
+footer a{color:#888;text-decoration:none;}
+</style>
+</head>
+<body>
+
+<a class="top-banner" href="index.html">
+  <div class="top-banner-inner">
+    <div class="top-banner-left">
+      <div class="top-banner-icon"><img src="images/icon.png" alt="むたっこ製作所"></div>
+      <div class="top-banner-text">
+        <div class="top-banner-ja">むたっこ製作所</div>
+        <div class="top-banner-en">Mutacco Works — 無料ツール集</div>
+      </div>
+    </div>
+    <div class="top-banner-btn">ほかのツールも見ていってね 🐈‍⬛</div>
+  </div>
+</a>
+
+<div class="page-header">
+  <h1>西暦・和暦 変換</h1>
+  <p>令和・平成・昭和・大正・明治 ― 早見表・年齢計算つき</p>
+</div>
+
+<div class="main">
+
+  <!-- 今日 -->
+  <div class="today-card">
+    <div>
+      <div class="today-label">TODAY</div>
+      <div class="today-value" id="todayWareki">―</div>
+    </div>
+    <div style="text-align:right">
+      <div class="today-label">西暦</div>
+      <div class="today-value" id="todaySeireki">―</div>
+    </div>
+  </div>
+
+  <!-- 広告 -->
+  <div class="ad-space">[ AD ]</div>
+
+  <!-- 西暦→和暦 -->
+  <div class="panel">
+    <div class="panel-title">西暦 → 和暦</div>
+    <div class="convert-grid">
+      <div class="convert-box">
+        <div class="convert-label">西暦を入力</div>
+        <div class="input-row">
+          <input class="convert-input" id="seiIn" type="number" placeholder="例：1995" min="1868" max="2100">
+          <span style="display:flex;align-items:center;font-size:14px;color:var(--text2)">年</span>
+        </div>
+      </div>
+      <div class="convert-box">
+        <div class="convert-label">和暦</div>
+        <div class="result-box" id="seiResult">—</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 和暦→西暦 -->
+  <div class="panel">
+    <div class="panel-title">和暦 → 西暦</div>
+    <div class="convert-grid">
+      <div class="convert-box">
+        <div class="convert-label">和暦を入力</div>
+        <div class="input-row">
+          <select class="era-select" id="eraSelect">
+            <option value="reiwa">令和</option>
+            <option value="heisei">平成</option>
+            <option value="showa">昭和</option>
+            <option value="taisho">大正</option>
+            <option value="meiji">明治</option>
+          </select>
+          <input class="convert-input" id="waIn" type="number" placeholder="例：7" min="1" max="99">
+          <span style="display:flex;align-items:center;font-size:14px;color:var(--text2)">年</span>
+        </div>
+      </div>
+      <div class="convert-box">
+        <div class="convert-label">西暦</div>
+        <div class="result-box" id="waResult">—</div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- 広告 -->
+  <div class="ad-space">[ AD ]</div>
+
+  <!-- 早見表 -->
+  <div class="panel">
+    <div class="panel-title">早見表</div>
+    <div class="era-tabs">
+      <div class="era-tab on" onclick="showEra('reiwa',this)">令和</div>
+      <div class="era-tab" onclick="showEra('heisei',this)">平成</div>
+      <div class="era-tab" onclick="showEra('showa',this)">昭和</div>
+      <div class="era-tab" onclick="showEra('taisho',this)">大正</div>
+      <div class="era-tab" onclick="showEra('meiji',this)">明治</div>
+    </div>
+    <div class="table-wrap">
+      <table id="eraTable"></table>
+    </div>
+  </div>
+
+  <!-- 広告 -->
+  <div class="ad-space">[ AD ]</div>
+
+</div>
+
+<footer>© 2026 Mutacco Works. ｜ <a href="https://mutaccoworks.github.io/privacy.html">Privacy Policy</a> ｜ <a href="https://forms.gle/iqYoraUazwuqxXeC9" target="_blank">お問い合わせ</a></footer>
+
+<script>
+var ERAS = {
+  reiwa:  {name:'令和', start:2019, end:null,  offset:2018},
+  heisei: {name:'平成', start:1989, end:2019,  offset:1988},
+  showa:  {name:'昭和', start:1926, end:1989,  offset:1925},
+  taisho: {name:'大正', start:1912, end:1926,  offset:1911},
+  meiji:  {name:'明治', start:1868, end:1912,  offset:1867},
+};
+
+function seiToWa(year){
+  year = parseInt(year);
+  if(isNaN(year)) return null;
+  for(var key in ERAS){
+    var e = ERAS[key];
+    var end = e.end || 9999;
+    if(year >= e.start && year < end){
+      var n = year - e.offset;
+      return e.name + (n === 1 ? '元' : n) + '年';
+    }
+  }
+  return null;
+}
+
+function waToSei(eraKey, n){
+  n = parseInt(n);
+  if(isNaN(n) || n < 1) return null;
+  var e = ERAS[eraKey];
+  var year = e.offset + n;
+  var end = e.end || 9999;
+  if(year < e.start || year >= end) return null;
+  return year + '年';
+}
+
+// 今日
+var now = new Date();
+var thisYear = now.getFullYear();
+var waToday = seiToWa(thisYear);
+document.getElementById('todayWareki').textContent = waToday || '―';
+document.getElementById('todaySeireki').textContent = thisYear + '年';
+
+// 西暦→和暦
+document.getElementById('seiIn').addEventListener('input', function(){
+  var r = seiToWa(this.value);
+  document.getElementById('seiResult').textContent = r || (this.value ? '対応する和暦がありません' : '—');
+});
+
+// 和暦→西暦
+function updateWa(){
+  var key = document.getElementById('eraSelect').value;
+  var n = document.getElementById('waIn').value;
+  if(!n){ document.getElementById('waResult').textContent = '—'; return; }
+  var r = waToSei(key, n);
+  document.getElementById('waResult').textContent = r || '範囲外';
+}
+document.getElementById('eraSelect').addEventListener('change', updateWa);
+document.getElementById('waIn').addEventListener('input', updateWa);
+
+// 早見表
+function showEra(key, el){
+  document.querySelectorAll('.era-tab').forEach(function(t){t.classList.remove('on');});
+  el.classList.add('on');
+  var e = ERAS[key];
+  var end = e.end ? e.end - 1 : thisYear;
+  var rows = '';
+  rows += '<tr><th>和暦</th><th>西暦</th><th>干支</th><th>今年の年齢</th></tr>';
+  var eto = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+  for(var y = e.start; y <= end; y++){
+    var n = y - e.offset;
+    var waStr = e.name + (n === 1 ? '元' : n) + '年';
+    var etoStr = eto[(y - 4) % 12];
+    var age = thisYear - y;
+    var isThis = (y === thisYear);
+    rows += '<tr class="' + (isThis ? 'highlight' : '') + '"><td>' + waStr + '</td><td>' + y + '年</td><td>' + etoStr + '</td><td>' + age + '歳</td></tr>';
+  }
+  document.getElementById('eraTable').innerHTML = rows;
+  // 今年にスクロール
+  var hl = document.querySelector('.highlight');
+  if(hl) setTimeout(function(){ hl.scrollIntoView({block:'center',behavior:'smooth'}); }, 100);
+}
+showEra('reiwa', document.querySelector('.era-tab'));
+</script>
+</body>
+</html>
