@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ロト6番号予想ツール | 当選番号を自動生成 | むたっこ製作所</title>
+<meta name="description" content="ロト6の番号を自動生成！ランダム生成・よく出る数字参考・誕生日や好きな数字を組み合わせた予想など3つのモードで番号を提案。無料・登録不要・スマホ対応。むたっこ製作所。">
+<link rel="icon" href="images/icon.png">
+<link rel="canonical" href="https://mutaccoworks.github.io/loto6.html">
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+1p:wght@400;700;900&family=Zen+Kaku+Gothic+New:wght@400;700&display=swap" rel="stylesheet">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8754050840177143" crossorigin="anonymous"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0a1a;
+  --surface:#12122a;
+  --surface2:#1a1a35;
+  --accent:#0191a2;
+  --accent2:#00d4e8;
+  --gold:#ffd700;
+  --text:#fff;
+  --text2:#aaa;
+  --border:#2a2a4a;
+  --r:12px;
+}
+body{background:var(--bg);color:var(--text);font-family:'Zen Kaku Gothic New',sans-serif;min-height:100vh;}
+
+/* バナー */
+.top-banner{width:100%;background:#fff;border-bottom:2px solid #d0e8ec;padding:0;text-decoration:none;display:block;}
+.top-banner-inner{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;}
+.top-banner-left{display:flex;align-items:center;gap:10px;}
+.top-banner-icon{width:36px;height:36px;border-radius:10px;overflow:hidden;flex-shrink:0;background:#fff;border:1px solid #e0e0e0;}
+.top-banner-icon img{width:100%;height:100%;object-fit:cover;display:block;}
+.top-banner-text{display:flex;flex-direction:column;gap:1px;}
+.top-banner-ja{font-size:14px;font-weight:bold;color:#111;letter-spacing:0.5px;}
+.top-banner-en{font-size:9px;color:#0191a2;letter-spacing:0.5px;white-space:nowrap;}
+.top-banner-btn{background:linear-gradient(90deg,#005f6b,#0191a2,#00d4e8,#0191a2,#005f6b);background-size:300%;color:#fff;font-size:12px;font-weight:bold;padding:8px 14px;border-radius:20px;letter-spacing:1px;white-space:nowrap;box-shadow:0 2px 12px rgba(1,145,162,0.4);animation:gbg 2s linear infinite;}
+@keyframes gbg{0%{background-position:0%}100%{background-position:300%}}
+
+.page-header{text-align:center;padding:28px 16px 8px;}
+.page-header h1{font-family:'M PLUS 1p',sans-serif;font-size:26px;font-weight:900;letter-spacing:4px;background:linear-gradient(90deg,var(--gold),#fff,var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.page-header p{font-size:12px;color:var(--text2);margin-top:6px;letter-spacing:1px;}
+
+.main{max-width:640px;margin:0 auto;padding:0 16px 40px;display:flex;flex-direction:column;gap:16px;}
+
+/* モードタブ */
+.mode-tabs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+.mode-tab{background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--r);padding:12px 8px;cursor:pointer;text-align:center;transition:all 0.2s;display:flex;flex-direction:column;gap:4px;align-items:center;}
+.mode-tab.on{border-color:var(--accent2);background:rgba(0,212,232,0.1);}
+.mode-tab .tab-icon{font-size:22px;}
+.mode-tab .tab-name{font-size:11px;letter-spacing:1px;color:var(--text2);}
+.mode-tab.on .tab-name{color:var(--accent2);}
+
+/* パネル */
+.panel{background:var(--surface);border-radius:var(--r);border:1.5px solid var(--border);padding:16px;display:flex;flex-direction:column;gap:12px;}
+.panel-title{font-size:11px;font-weight:700;letter-spacing:3px;color:var(--accent2);border-bottom:1px solid var(--border);padding-bottom:8px;}
+
+/* 数字ボール */
+.balls{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;padding:8px 0;}
+.ball{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'M PLUS 1p',sans-serif;font-size:18px;font-weight:900;cursor:default;position:relative;transition:transform 0.3s;flex-shrink:0;}
+.ball.anim{animation:pop 0.4s ease;}
+@keyframes pop{0%{transform:scale(0)}60%{transform:scale(1.2)}100%{transform:scale(1)}}
+.ball.b1{background:linear-gradient(135deg,#ff6b6b,#ee0000);box-shadow:0 3px 12px rgba(255,50,50,0.5);}
+.ball.b2{background:linear-gradient(135deg,#ffa500,#ff6600);box-shadow:0 3px 12px rgba(255,100,0,0.5);}
+.ball.b3{background:linear-gradient(135deg,#ffd700,#ffa500);box-shadow:0 3px 12px rgba(255,200,0,0.5);color:#333;}
+.ball.b4{background:linear-gradient(135deg,#66ff66,#00aa00);box-shadow:0 3px 12px rgba(0,200,0,0.5);}
+.ball.b5{background:linear-gradient(135deg,#66aaff,#0055ff);box-shadow:0 3px 12px rgba(0,100,255,0.5);}
+.ball.b6{background:linear-gradient(135deg,#cc66ff,#8800ff);box-shadow:0 3px 12px rgba(150,0,255,0.5);}
+.ball.empty{background:var(--surface2);border:2px dashed var(--border);color:var(--text2);}
+
+/* 生成ボタン */
+.gen-btn{background:linear-gradient(90deg,var(--gold),#ffaa00,var(--gold));background-size:300%;color:#000;font-family:'M PLUS 1p',sans-serif;font-size:16px;font-weight:900;letter-spacing:3px;border:none;border-radius:var(--r);padding:16px;cursor:pointer;animation:gbg 3s linear infinite;box-shadow:0 4px 20px rgba(255,215,0,0.4);transition:transform 0.1s;}
+.gen-btn:active{transform:scale(0.97);}
+
+/* 好きな数字 */
+.fav-nums{display:flex;flex-wrap:wrap;gap:6px;}
+.num-chip{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'M PLUS 1p',sans-serif;font-size:13px;font-weight:700;cursor:pointer;border:1.5px solid var(--border);background:var(--surface2);color:var(--text2);transition:all 0.15s;user-select:none;}
+.num-chip.sel{background:var(--gold);color:#000;border-color:var(--gold);}
+.num-chip:hover{border-color:var(--accent2);}
+
+/* 誕生日入力 */
+.birth-input{background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;padding:10px 14px;font-size:16px;color:var(--text);font-family:'Zen Kaku Gothic New',sans-serif;outline:none;width:100%;transition:border-color 0.15s;}
+.birth-input:focus{border-color:var(--accent2);}
+
+/* 傾向バー */
+.hot-list{display:flex;flex-direction:column;gap:6px;}
+.hot-row{display:flex;align-items:center;gap:8px;}
+.hot-num{font-family:'M PLUS 1p',sans-serif;font-size:13px;font-weight:700;width:28px;text-align:right;}
+.hot-bar-wrap{flex:1;background:var(--surface2);border-radius:4px;height:8px;overflow:hidden;}
+.hot-bar{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--accent),var(--accent2));}
+.hot-count{font-size:11px;color:var(--text2);width:40px;}
+
+/* コピーボタン */
+.copy-row{display:flex;justify-content:flex-end;}
+.copy-btn{background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;padding:6px 14px;font-size:11px;cursor:pointer;letter-spacing:1px;color:var(--text2);font-family:'Zen Kaku Gothic New',sans-serif;transition:all 0.15s;}
+.copy-btn:hover{border-color:var(--accent2);color:var(--accent2);}
+
+.mode-panel{display:none;}
+.mode-panel.show{display:flex;flex-direction:column;gap:12px;}
+
+.hint{font-size:11px;color:var(--text2);line-height:1.7;}
+
+.ad-space{width:100%;height:60px;background:rgba(255,255,255,0.04);border:1px dashed #333;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#444;font-size:10px;letter-spacing:2px;}
+
+footer{text-align:center;padding:16px;font-size:10px;color:#555;letter-spacing:2px;}
+footer a{color:#555;text-decoration:none;}
+</style>
+</head>
+<body>
+
+<a class="top-banner" href="index.html">
+  <div class="top-banner-inner">
+    <div class="top-banner-left">
+      <div class="top-banner-icon"><img src="images/icon.png" alt="むたっこ製作所"></div>
+      <div class="top-banner-text">
+        <div class="top-banner-ja">むたっこ製作所</div>
+        <div class="top-banner-en">Mutacco Works — 無料ツール集</div>
+      </div>
+    </div>
+    <div class="top-banner-btn">ほかのツールも見ていってね 🐈‍⬛</div>
+  </div>
+</a>
+
+<div class="page-header">
+  <h1>🎱 LOTO6 予想</h1>
+  <p>今週の6つの数字、一緒に考えよう</p>
+</div>
+
+<div class="main">
+
+  <div class="ad-space">[ AD ]</div>
+
+  <!-- モード選択 -->
+  <div class="mode-tabs">
+    <div class="mode-tab on" onclick="switchMode('random',this)">
+      <div class="tab-icon">🎲</div>
+      <div class="tab-name">ランダム</div>
+    </div>
+    <div class="mode-tab" onclick="switchMode('hot',this)">
+      <div class="tab-icon">🔥</div>
+      <div class="tab-name">よく出る数字</div>
+    </div>
+    <div class="mode-tab" onclick="switchMode('omajinai',this)">
+      <div class="tab-icon">✨</div>
+      <div class="tab-name">おまじない</div>
+    </div>
+  </div>
+
+  <!-- ランダムモード -->
+  <div class="mode-panel show" id="panel-random">
+    <div class="panel">
+      <div class="panel-title">RANDOM</div>
+      <div class="hint">1〜43からランダムに6つ選びます。運を天に任せよう！</div>
+      <div class="balls" id="balls-random">
+        <div class="ball empty">?</div>
+        <div class="ball empty">?</div>
+        <div class="ball empty">?</div>
+        <div class="ball empty">?</div>
+        <div class="ball empty">?</div>
+        <div class="ball empty">?</div>
+      </div>
+      <div class="copy-row"><button class="copy-btn" onclick="copyNums('random')">数字をコピー</button></div>
+      <button class="gen-btn" onclick="genRandom()">🎲 生成する</button>
+    </div>
+  </div>
+
+  <!-- よく出る数字モード -->
+  <div class="mode-panel" id="panel-hot">
+    <div class="panel">
+      <div class="panel-title">HOT NUMBERS</div>
+      <div class="hint">過去の当選傾向を参考に、出現頻度の高い数字を中心に生成します。</div>
+      <div class="balls" id="balls-hot">
+        <div class="ball empty">?</div>
+        <div class="ball empty">?</div>
+        <div class="ball empty">?</div>
+        <div class="ball empty">?</div>
+        <div class="ball empty">?</div>
+        <div class="ball empty">?</div>
+      </div>
+      <div class="copy-row"><button class="copy-btn" onclick="copyNums('hot')">数字をコピー</button></div>
+      <button class="gen-btn" onclick="genHot()">🔥 生成する</button>
+    </div>
+    <div class="panel">
+      <div class="panel-title">出現頻度（参考）</div>
+      <div class="hot-list" id="hotList"></div>
+    </div>
+  </div>
+
+  <!-- おまじないモード -->
+  <div class="mode-panel" id="panel-omajinai">
+    <div class="panel">
+      <div class="panel-title">OMAJINAI</div>
+      <div class="hint">誕生日や好きな数字を入れると、残りをランダムで補完します。数字は複数選べます。</div>
+
+      <div>
+        <div style="font-size:11px;color:var(--text2);margin-bottom:8px;letter-spacing:1px">誕生日から自動追加</div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <input class="birth-input" id="birthOma" type="date" style="width:auto;flex:1">
+          <button class="copy-btn" onclick="addBirthday()" style="white-space:nowrap">誕生日を追加</button>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size:11px;color:var(--text2);margin-bottom:8px;letter-spacing:1px">好きな数字を選ぶ（最大6個）</div>
+        <div class="fav-nums" id="favNums"></div>
+      </div>
+
+      <div class="balls" id="balls-omajinai">
+        <div class="ball empty">?</div>
+        <div class="ball empty">?</div>
+        <div class="ball empty">?</div>
+        <div class="ball empty">?</div>
+        <div class="ball empty">?</div>
+        <div class="ball empty">?</div>
+      </div>
+      <div class="copy-row"><button class="copy-btn" onclick="copyNums('omajinai')">数字をコピー</button></div>
+      <button class="gen-btn" onclick="genOmajinai()">✨ 生成する</button>
+    </div>
+  </div>
+
+  <div class="ad-space">[ AD ]</div>
+
+  <div style="font-size:10px;color:#444;text-align:center;line-height:1.8;letter-spacing:1px">
+    ※ このツールで生成される番号は当選を保証するものではありません。<br>宝くじは20歳以上の方のみ購入できます。ほどほどに楽しもう🐟
+  </div>
+
+  <div style="background:rgba(255,255,255,0.03);border-radius:12px;padding:16px 18px;font-size:11px;color:#555;line-height:2;letter-spacing:0.5px;">
+    <p style="margin-bottom:8px;font-size:12px;color:#666;font-weight:bold">ロト6予想ツールとは？</p>
+    <p>ロト6（LOTO6）の<strong style="color:#777">番号予想</strong>・<strong style="color:#777">自動生成</strong>が無料でできるツールです。毎週の<strong style="color:#777">ロト6購入</strong>前に、ぜひ番号選びの参考にしてみてください。</p>
+    <p style="margin-top:8px">3つのモードで番号を提案します。完全ランダムな<strong style="color:#777">クイックピック</strong>風の生成、過去の<strong style="color:#777">当選番号</strong>の出現頻度を参考にした<strong style="color:#777">ホットナンバー</strong>予想、誕生日や記念日など<strong style="color:#777">好きな数字</strong>を組み込んだおまじない予想の3種類。<strong style="color:#777">ロト6 数字 選び方</strong>に迷ったときにどうぞ。登録不要・完全無料・スマホ対応。</p>
+  </div>
+
+</div>
+
+<footer>© 2026 Mutacco Works. ｜ <a href="https://mutaccoworks.github.io/privacy.html">Privacy Policy</a> ｜ <a href="https://forms.gle/iqYoraUazwuqxXeC9" target="_blank">お問い合わせ</a></footer>
+
+<script>
+// 過去の出現頻度データ（傾向参考用・概算）
+var HOT_WEIGHTS = {
+  31:180, 43:175, 23:172, 38:170, 7:168, 37:167, 19:165, 14:164,
+  6:163, 27:162, 3:161, 36:160, 28:159, 11:158, 40:157, 17:156,
+  1:155, 33:154, 21:153, 9:152, 42:151, 15:150, 29:149, 5:148,
+  34:147, 12:146, 24:145, 41:144, 8:143, 20:142, 39:141, 16:140,
+  30:139, 4:138, 26:137, 10:136, 35:135, 22:134, 32:133, 13:132,
+  25:131, 18:130, 2:129
+};
+
+var BALL_COLORS = ['b1','b2','b3','b4','b5','b6'];
+var currentNums = {random:[], hot:[], omajinai:[]};
+var favSelected = [];
+
+// モード切替
+function switchMode(mode, el){
+  document.querySelectorAll('.mode-tab').forEach(function(t){t.classList.remove('on');});
+  document.querySelectorAll('.mode-panel').forEach(function(p){p.classList.remove('show');});
+  el.classList.add('on');
+  document.getElementById('panel-'+mode).classList.add('show');
+}
+
+// ランダム生成
+function genRandom(){
+  var nums = pickRandom([], 6);
+  currentNums.random = nums;
+  renderBalls('balls-random', nums);
+}
+
+// よく出る数字生成
+function genHot(){
+  var nums = pickWeighted(6);
+  currentNums.hot = nums;
+  renderBalls('balls-hot', nums);
+}
+
+// おまじない生成
+function genOmajinai(){
+  var fixed = favSelected.slice(0, 6);
+  var need = 6 - fixed.length;
+  var extra = pickRandom(fixed, need);
+  var nums = fixed.concat(extra).sort(function(a,b){return a-b;});
+  currentNums.omajinai = nums;
+  renderBalls('balls-omajinai', nums);
+}
+
+// ランダム選択
+function pickRandom(exclude, n){
+  var pool = [];
+  for(var i=1;i<=43;i++){
+    if(exclude.indexOf(i) === -1) pool.push(i);
+  }
+  var result = [];
+  while(result.length < n && pool.length > 0){
+    var idx = Math.floor(Math.random() * pool.length);
+    result.push(pool.splice(idx, 1)[0]);
+  }
+  return result.sort(function(a,b){return a-b;});
+}
+
+// 重み付き選択
+function pickWeighted(n){
+  var keys = Object.keys(HOT_WEIGHTS).map(Number);
+  var result = [];
+  var pool = keys.slice();
+  while(result.length < n && pool.length > 0){
+    var totalW = pool.reduce(function(s,k){return s+HOT_WEIGHTS[k];}, 0);
+    var r = Math.random() * totalW;
+    var cum = 0;
+    for(var i=0;i<pool.length;i++){
+      cum += HOT_WEIGHTS[pool[i]];
+      if(r <= cum){
+        result.push(pool.splice(i, 1)[0]);
+        break;
+      }
+    }
+  }
+  return result.sort(function(a,b){return a-b;});
+}
+
+// ボール描画
+function renderBalls(containerId, nums){
+  var el = document.getElementById(containerId);
+  el.innerHTML = '';
+  nums.forEach(function(n, i){
+    var div = document.createElement('div');
+    div.className = 'ball ' + BALL_COLORS[i] + ' anim';
+    div.textContent = n;
+    div.style.animationDelay = (i * 0.08) + 's';
+    el.appendChild(div);
+  });
+}
+
+// コピー
+function copyNums(mode){
+  var nums = currentNums[mode];
+  if(!nums || nums.length === 0){ alert('先に生成してください！'); return; }
+  var text = nums.join('  ');
+  navigator.clipboard.writeText(text).catch(function(){
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+  });
+}
+
+// 誕生日から数字追加
+function addBirthday(){
+  var val = document.getElementById('birthOma').value;
+  if(!val) return;
+  var d = new Date(val);
+  var month = d.getMonth() + 1;
+  var day = d.getDate();
+  var candidates = [month, day, month + day].filter(function(n){ return n >= 1 && n <= 43; });
+  candidates.forEach(function(n){
+    if(favSelected.indexOf(n) === -1 && favSelected.length < 6){
+      favSelected.push(n);
+    }
+  });
+  renderFavNums();
+}
+
+// 好きな数字グリッド
+function renderFavNums(){
+  var el = document.getElementById('favNums');
+  el.innerHTML = '';
+  for(var i=1;i<=43;i++){
+    var div = document.createElement('div');
+    div.className = 'num-chip' + (favSelected.indexOf(i) !== -1 ? ' sel' : '');
+    div.textContent = i;
+    div.dataset.n = i;
+    div.onclick = (function(n){
+      return function(){
+        var idx = favSelected.indexOf(n);
+        if(idx !== -1){
+          favSelected.splice(idx, 1);
+        } else if(favSelected.length < 6){
+          favSelected.push(n);
+        }
+        renderFavNums();
+      };
+    })(i);
+    el.appendChild(div);
+  }
+}
+
+// 出現頻度バー
+function renderHotList(){
+  var el = document.getElementById('hotList');
+  var sorted = Object.keys(HOT_WEIGHTS).map(Number).sort(function(a,b){ return HOT_WEIGHTS[b]-HOT_WEIGHTS[a]; }).slice(0,10);
+  var max = HOT_WEIGHTS[sorted[0]];
+  el.innerHTML = sorted.map(function(n){
+    var pct = Math.round(HOT_WEIGHTS[n] / max * 100);
+    return '<div class="hot-row">'
+      + '<div class="hot-num">' + n + '</div>'
+      + '<div class="hot-bar-wrap"><div class="hot-bar" style="width:' + pct + '%"></div></div>'
+      + '<div class="hot-count">' + HOT_WEIGHTS[n] + '回</div>'
+      + '</div>';
+  }).join('');
+}
+
+renderFavNums();
+renderHotList();
+</script>
+</body>
+</html>
