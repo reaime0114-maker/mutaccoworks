@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>割り勘計算ツール | 飲み会・食事の割り勘を簡単計算 | むたっこ製作所</title>
+<meta name="description" content="人数と合計金額を入力するだけで一人あたりの金額を計算。上司や先輩など多めに払う人を最大3人まで個別設定可能。登録不要・スマホ対応・完全無料。むたっこ製作所。">
+<link rel="icon" href="images/icon.png">
+<link rel="canonical" href="https://mutaccoworks.github.io/warikan.html">
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+1p:wght@400;700;900&family=Zen+Kaku+Gothic+New:wght@400;700&display=swap" rel="stylesheet">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8754050840177143" crossorigin="anonymous"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#f0f8fa;
+  --surface:#ffffff;
+  --accent:#0191a2;
+  --text:#111;
+  --text2:#555;
+  --border:#d0e8ec;
+  --r:12px;
+}
+body{background:var(--bg);color:var(--text);font-family:'Zen Kaku Gothic New',sans-serif;min-height:100vh;}
+
+.top-banner{width:100%;background:#fff;border-bottom:2px solid var(--border);padding:0;text-decoration:none;display:block;transition:background 0.2s;}
+.top-banner:hover{background:#f0f8fa;}
+.top-banner-inner{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;}
+.top-banner-left{display:flex;align-items:center;gap:10px;}
+.top-banner-icon{width:36px;height:36px;border-radius:10px;overflow:hidden;flex-shrink:0;background:#fff;border:1px solid #e0e0e0;}
+.top-banner-icon img{width:100%;height:100%;object-fit:cover;display:block;}
+.top-banner-text{display:flex;flex-direction:column;gap:1px;}
+.top-banner-ja{font-size:14px;font-weight:bold;color:#111;letter-spacing:0.5px;}
+.top-banner-en{font-size:9px;color:var(--accent);letter-spacing:0.5px;white-space:nowrap;}
+.top-banner-btn{background:linear-gradient(90deg,#005f6b,#0191a2,#00d4e8,#0191a2,#005f6b);background-size:300%;color:#fff;font-size:12px;font-weight:bold;padding:8px 14px;border-radius:20px;letter-spacing:1px;white-space:nowrap;box-shadow:0 2px 12px rgba(1,145,162,0.4);animation:gbg 2s linear infinite;}
+@keyframes gbg{0%{background-position:0%}100%{background-position:300%}}
+
+.page-header{text-align:center;padding:24px 16px 12px;}
+.page-header h1{font-family:'M PLUS 1p',sans-serif;font-size:22px;font-weight:900;letter-spacing:3px;color:var(--accent);}
+.page-header p{font-size:12px;color:var(--text2);margin-top:4px;letter-spacing:1px;}
+
+.main{max-width:800px;margin:0 auto;padding:0 16px 40px;display:flex;flex-direction:column;gap:16px;}
+
+.panel{background:var(--surface);border-radius:var(--r);border:1.5px solid var(--border);padding:16px;display:flex;flex-direction:column;gap:14px;}
+.panel-title{font-size:11px;font-weight:700;letter-spacing:3px;color:var(--accent);border-bottom:1px solid var(--border);padding-bottom:8px;}
+
+.input-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media(max-width:480px){.input-grid{grid-template-columns:1fr;}}
+
+.input-group{display:flex;flex-direction:column;gap:6px;}
+.input-label{font-size:11px;color:var(--text2);letter-spacing:1px;}
+.input-row{display:flex;align-items:center;gap:6px;}
+.num-input{border:1.5px solid var(--border);border-radius:8px;padding:10px 14px;font-size:18px;font-family:'M PLUS 1p',sans-serif;font-weight:700;outline:none;background:#f8fcfd;transition:border-color 0.15s;width:100%;}
+.num-input:focus{border-color:var(--accent);}
+.unit{font-size:13px;color:var(--text2);white-space:nowrap;}
+
+.stepper{display:flex;align-items:center;gap:8px;}
+.step-btn{width:36px;height:36px;border-radius:8px;border:1.5px solid var(--border);background:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;color:var(--accent);font-weight:bold;flex-shrink:0;}
+.step-btn:hover{border-color:var(--accent);background:var(--bg);}
+.step-display{font-family:'M PLUS 1p',sans-serif;font-size:24px;font-weight:900;color:var(--text);min-width:48px;text-align:center;}
+
+.opt-group{display:flex;gap:8px;flex-wrap:wrap;}
+.opt-btn{border:1.5px solid var(--border);border-radius:20px;padding:5px 14px;font-size:12px;cursor:pointer;background:#fff;transition:all 0.15s;letter-spacing:1px;font-family:'Zen Kaku Gothic New',sans-serif;}
+.opt-btn.on{background:var(--accent);color:#fff;border-color:var(--accent);}
+
+/* 多め払い */
+.extra-list{display:flex;flex-direction:column;gap:10px;}
+.extra-item{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.extra-name{border:1.5px solid var(--border);border-radius:8px;padding:8px 12px;font-size:14px;font-family:'Zen Kaku Gothic New',sans-serif;outline:none;background:#f8fcfd;transition:border-color 0.15s;width:130px;}
+.extra-name:focus{border-color:var(--accent);}
+.extra-amount{border:1.5px solid var(--border);border-radius:8px;padding:8px 12px;font-size:16px;font-family:'M PLUS 1p',sans-serif;font-weight:700;outline:none;background:#f8fcfd;transition:border-color 0.15s;width:110px;}
+.extra-amount:focus{border-color:var(--accent);}
+.extra-label{font-size:12px;color:var(--text2);}
+.add-btn{border:1.5px dashed var(--border);border-radius:8px;padding:8px 16px;font-size:12px;cursor:pointer;background:transparent;color:var(--text2);letter-spacing:1px;font-family:'Zen Kaku Gothic New',sans-serif;transition:all 0.15s;}
+.add-btn:hover{border-color:var(--accent);color:var(--accent);}
+.remove-btn{border:none;background:none;color:#ccc;font-size:18px;cursor:pointer;padding:0 4px;line-height:1;transition:color 0.15s;flex-shrink:0;}
+.remove-btn:hover{color:#e05;}
+
+/* 結果 */
+.result-panel{background:linear-gradient(135deg,#0191a2,#00d4e8);border-radius:var(--r);padding:20px;color:#fff;display:none;}
+.result-panel.show{display:block;}
+.result-main{text-align:center;margin-bottom:16px;}
+.result-label{font-size:11px;letter-spacing:3px;opacity:0.85;margin-bottom:6px;}
+.result-value{font-family:'M PLUS 1p',sans-serif;font-size:48px;font-weight:900;letter-spacing:2px;line-height:1;}
+.result-unit{font-size:16px;margin-left:4px;}
+
+.result-details{background:rgba(255,255,255,0.18);border-radius:8px;padding:12px 16px;display:flex;flex-direction:column;gap:8px;}
+.detail-row{display:flex;justify-content:space-between;align-items:center;font-size:13px;}
+.detail-label{opacity:0.85;}
+.detail-value{font-family:'M PLUS 1p',sans-serif;font-weight:700;font-size:15px;}
+.detail-sep{border-top:1px solid rgba(255,255,255,0.25);padding-top:8px;margin-top:4px;}
+
+.copy-area{margin-top:14px;display:flex;justify-content:center;}
+.copy-btn{background:rgba(255,255,255,0.25);border:1.5px solid rgba(255,255,255,0.5);border-radius:20px;padding:8px 20px;font-size:12px;cursor:pointer;color:#fff;letter-spacing:1px;font-family:'Zen Kaku Gothic New',sans-serif;transition:all 0.15s;}
+.copy-btn:hover{background:rgba(255,255,255,0.4);}
+.copy-toast{font-size:11px;color:rgba(255,255,255,0.8);margin-top:6px;text-align:center;min-height:16px;}
+
+.ad-space{width:100%;height:60px;background:#f0f0f0;border:1px dashed #ccc;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#aaa;font-size:10px;letter-spacing:2px;}
+
+footer{text-align:center;padding:16px;font-size:10px;color:#888;letter-spacing:2px;}
+footer a{color:#888;text-decoration:none;}
+</style>
+</head>
+<body>
+
+<a class="top-banner" href="index.html">
+  <div class="top-banner-inner">
+    <div class="top-banner-left">
+      <div class="top-banner-icon"><img src="images/icon.png" alt="むたっこ製作所"></div>
+      <div class="top-banner-text">
+        <div class="top-banner-ja">むたっこ製作所</div>
+        <div class="top-banner-en">Mutacco Works — 無料ツール集</div>
+      </div>
+    </div>
+    <div class="top-banner-btn">ほかのツールも見ていってね 🐈‍⬛</div>
+  </div>
+</a>
+
+<div class="page-header">
+  <h1>割り勘 計算</h1>
+  <p>人数と合計を入れるだけ ― 多め払い対応</p>
+</div>
+
+<div class="main">
+
+  <div class="ad-space">[ AD ]</div>
+
+  <!-- 基本入力 -->
+  <div class="panel">
+    <div class="panel-title">金額と人数を入力</div>
+    <div class="input-grid">
+      <div class="input-group">
+        <div class="input-label">合計金額</div>
+        <div class="input-row">
+          <input class="num-input" id="totalInput" type="number" placeholder="5000" min="0" inputmode="numeric">
+          <span class="unit">円</span>
+        </div>
+      </div>
+      <div class="input-group">
+        <div class="input-label">人数（全員）</div>
+        <div class="stepper">
+          <button class="step-btn" id="minusBtn">－</button>
+          <div class="step-display" id="countDisplay">4</div>
+          <button class="step-btn" id="plusBtn">＋</button>
+          <span class="unit">人</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 多め払い -->
+  <div class="panel">
+    <div class="panel-title">多めに払う人の設定（任意・最大3人）</div>
+    <div style="font-size:11px;color:var(--text2);">均等割りの金額に、追加で払う金額を入力してください。</div>
+    <div class="extra-list" id="extraList"></div>
+    <button class="add-btn" id="addExtraBtn">＋ 多めに払う人を追加</button>
+  </div>
+
+  <!-- 結果 -->
+  <div class="result-panel" id="resultPanel">
+    <div class="result-main">
+      <div class="result-label">均等割り分（一人あたり）</div>
+      <div><span class="result-value" id="resultValue">—</span><span class="result-unit">円</span></div>
+    </div>
+    <div class="result-details" id="resultDetails"></div>
+    <div class="copy-area">
+      <button class="copy-btn" id="copyBtn">結果をコピー</button>
+    </div>
+    <div class="copy-toast" id="copyToast"></div>
+  </div>
+
+  <div class="ad-space">[ AD ]</div>
+
+</div>
+
+<div style="max-width:800px;margin:0 auto;padding:0 16px 16px;font-size:11px;color:var(--text2);line-height:2;letter-spacing:0.5px;">
+  <p style="margin-bottom:8px;font-size:12px;color:var(--text);font-weight:bold">割り勘計算ツールとは？</p>
+  <p>合計金額と人数を入力するだけで<strong>一人あたりの支払い金額</strong>を計算します。上司や先輩など<strong>多めに払う人</strong>を最大3人まで個別設定できます。飲み会・食事会・旅行のお会計に。登録不要・完全無料・スマホ対応。</p>
+</div>
+
+<footer>© 2026 Mutacco Works. ｜ <a href="https://mutaccoworks.github.io/privacy.html">Privacy Policy</a> ｜ <a href="https://forms.gle/iqYoraUazwuqxXeC9" target="_blank">お問い合わせ</a></footer>
+
+<script>
+var count = 4;
+var extras = []; // [{name, amount}]
+
+// 人数
+document.getElementById('minusBtn').addEventListener('click', function(){
+  if(count > 2){ count--; document.getElementById('countDisplay').textContent = count; calculate(); }
+});
+document.getElementById('plusBtn').addEventListener('click', function(){
+  if(count < 99){ count++; document.getElementById('countDisplay').textContent = count; calculate(); }
+});
+
+document.getElementById('totalInput').addEventListener('input', calculate);
+
+// 多め払い追加
+document.getElementById('addExtraBtn').addEventListener('click', function(){
+  if(extras.length >= 3) return;
+  extras.push({name:'', amount:0});
+  renderExtras();
+  calculate();
+});
+
+function renderExtras(){
+  var list = document.getElementById('extraList');
+  list.innerHTML = '';
+  extras.forEach(function(ex, i){
+    var div = document.createElement('div');
+    div.className = 'extra-item';
+    div.innerHTML =
+      '<span class="extra-label">' + (i+1) + '人目</span>' +
+      '<input class="extra-name" type="text" placeholder="名前（任意）" value="' + escHtml(ex.name) + '">' +
+      '<span class="extra-label">は均等割り＋</span>' +
+      '<input class="extra-amount" type="number" placeholder="0" min="0" inputmode="numeric" value="' + (ex.amount||'') + '">' +
+      '<span class="extra-label">円</span>' +
+      '<button class="remove-btn" title="削除">×</button>';
+
+    div.querySelector('.extra-name').addEventListener('input', function(){
+      extras[i].name = this.value;
+      calculate();
+    });
+    div.querySelector('.extra-amount').addEventListener('input', function(){
+      extras[i].amount = parseInt(this.value) || 0;
+      calculate();
+    });
+    div.querySelector('.remove-btn').addEventListener('click', function(){
+      extras.splice(i, 1);
+      renderExtras();
+      calculate();
+    });
+
+    list.appendChild(div);
+  });
+
+  // 3人になったら追加ボタンを隠す
+  document.getElementById('addExtraBtn').style.display = extras.length >= 3 ? 'none' : '';
+}
+
+function escHtml(s){
+  return s.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function calculate(){
+  var total = parseInt(document.getElementById('totalInput').value);
+  var panel = document.getElementById('resultPanel');
+  if(isNaN(total) || total <= 0){ panel.classList.remove('show'); return; }
+
+  // 多め払いの合計追加額
+  var extraTotal = 0;
+  extras.forEach(function(ex){ extraTotal += (ex.amount || 0); });
+
+  // 均等割り分 = (合計 - 追加額の合計) ÷ 全員（四捨五入）
+  var base = total - extraTotal;
+  if(base < 0) base = 0;
+  var perPerson = Math.round(base / count);
+
+  // 各自の支払い
+  var details = '';
+  var checkTotal = 0;
+
+  // 多め払いの人
+  var extraNames = [];
+  extras.forEach(function(ex){
+    var pay = perPerson + (ex.amount || 0);
+    var label = ex.name ? ex.name : '多め払いの人' + (extras.indexOf(ex)+1);
+    details += '<div class="detail-row"><span class="detail-label">' + escHtml(label) + '</span><span class="detail-value">' + pay.toLocaleString() + ' 円</span></div>';
+    checkTotal += pay;
+    extraNames.push({label: label, pay: pay});
+  });
+
+  // 残り全員（均等）
+  var normalCount = count - extras.length;
+  if(normalCount > 0){
+    details += '<div class="detail-row"><span class="detail-label">その他 ' + normalCount + ' 人</span><span class="detail-value">' + perPerson.toLocaleString() + ' 円 × ' + normalCount + '</span></div>';
+    checkTotal += perPerson * normalCount;
+  }
+
+  details += '<div class="detail-row detail-sep"><span class="detail-label">合計確認</span><span class="detail-value">' + checkTotal.toLocaleString() + ' 円</span></div>';
+
+  document.getElementById('resultValue').textContent = perPerson.toLocaleString();
+  document.getElementById('resultDetails').innerHTML = details;
+  panel.classList.add('show');
+
+  panel._copyData = {total:total, count:count, perPerson:perPerson, extras:extraNames, normalCount:normalCount, checkTotal:checkTotal};
+}
+
+// コピー
+document.getElementById('copyBtn').addEventListener('click', function(){
+  var d = document.getElementById('resultPanel')._copyData;
+  if(!d) return;
+  var lines = ['【割り勘計算】', '合計：' + d.total.toLocaleString() + '円 ／ ' + d.count + '人'];
+  d.extras.forEach(function(ex){
+    lines.push(ex.label + '：' + ex.pay.toLocaleString() + '円');
+  });
+  if(d.normalCount > 0){
+    lines.push('その他 ' + d.normalCount + '人：' + d.perPerson.toLocaleString() + '円');
+  }
+  lines.push('合計確認：' + d.checkTotal.toLocaleString() + '円');
+
+  var text = lines.join('\n');
+  navigator.clipboard.writeText(text).catch(function(){
+    var ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta);
+    ta.select(); document.execCommand('copy');
+    document.body.removeChild(ta);
+  });
+  var toast = document.getElementById('copyToast');
+  toast.textContent = 'コピーしました！';
+  setTimeout(function(){ toast.textContent = ''; }, 2000);
+});
+</script>
+</body>
+</html>
